@@ -1,0 +1,163 @@
+{
+  "1": {
+    "title": "One color, one shape",
+    "credit": "Piero",
+    "description": "One color, one shape."
+  },
+  "2": {
+    "title": "Twelve principles of animation",
+    "credit": "Anna Lucia",
+    "description": "Twelve principles of animation.",
+    "link": "https://en.wikipedia.org/wiki/Twelve_basic_principles_of_animation"
+  },
+  "3": {
+    "title": "Fibonacci forever",
+    "credit": "PaoloCurtoni",
+    "description": "Create a work that uses the Fibonacci sequence in some way.",
+    "link": "https://en.wikipedia.org/wiki/Fibonacci_sequence"
+  },
+  "4": {
+    "title": "Lowres",
+    "credit": "Manuel Larino",
+    "description": "An image or graphic with low resolution, where details are simplified or pixelated."
+  },
+  "5": {
+    "title": "Write Genuary",
+    "credit": "Piero",
+    "description": "Write \"Genuary\". Avoid using a font."
+  },
+  "6": {
+    "title": "Lights on/off",
+    "credit": "George Henry Rowe",
+    "description": "Make something that changes when you switch on or off the \"digital\" lights."
+  },
+  "7": {
+    "title": "Boolean algebra",
+    "credit": "PaoloCurtoni",
+    "description": "Get inspired by Boolean algebra, in any way.",
+    "link": "https://en.wikipedia.org/wiki/Boolean_algebra"
+  },
+  "8": {
+    "title": "A City",
+    "credit": "PaoloCurtoni",
+    "description": "Create a generative metropolis."
+  },
+  "9": {
+    "title": "Crazy automaton",
+    "credit": "PaoloCurtoni",
+    "description": "Cellular automata with crazy rules."
+  },
+  "10": {
+    "title": "Polar coordinates",
+    "credit": "Sophia (fractal kitty)",
+    "description": "Polar coordinates."
+  },
+  "11": {
+    "title": "Quine",
+    "credit": "Manuel Larino",
+    "description": "A Quine is a form of code poetry, it's a computer program that outputs exactly its own source code.",
+    "link": "https://en.wikipedia.org/wiki/Quine_(computing)"
+  },
+  "12": {
+    "title": "Boxes only",
+    "credit": "Stranger in the Q",
+    "description": "Boxes only."
+  },
+  "13": {
+    "title": "Self portrait",
+    "credit": "Jos Vromans",
+    "description": "For example, get started with a very basic human face, a few circles or oval shapes. How far can you improve this by adding features that actually look like you."
+  },
+  "14": {
+    "title": "Everything fits perfectly",
+    "credit": "Roni",
+    "description": "Everything fits perfectly."
+  },
+  "15": {
+    "title": "Invisible object",
+    "credit": "P1xelboy",
+    "description": "Create an invisible object where only the shadows can be seen."
+  },
+  "16": {
+    "title": "Order and disorder",
+    "credit": "Ivan Dianov",
+    "description": "Order and disorder."
+  },
+  "17": {
+    "title": "Wallpaper group",
+    "credit": "Ivan Dianov",
+    "description": "There are only 17 ways to cover a plane with a repeating pattern, choose your favourite.",
+    "link": "https://en.wikipedia.org/wiki/Wallpaper_group"
+  },
+  "18": {
+    "title": "Unexpected path",
+    "credit": "Baret LaVida",
+    "description": "Draw a route that changes direction based on one very simple rule."
+  },
+  "19": {
+    "title": "16x16",
+    "credit": "Jos Vromans",
+    "description": "16x16"
+  },
+  "20": {
+    "title": "One line",
+    "credit": "Jos Vromans",
+    "description": "An artwork that is made of a single line only."
+  },
+  "21": {
+    "title": "Bauhaus Poster",
+    "credit": "Piero",
+    "description": "Create a poster design inspired by the German art school Bauhaus.",
+    "link": "https://en.wikipedia.org/wiki/Bauhaus"
+  },
+  "22": {
+    "title": "Pen plotter ready",
+    "credit": "Sophia (fractal kitty)",
+    "description": "Pen plotter ready."
+  },
+  "23": {
+    "title": "Transparency",
+    "credit": "PaoloCurtoni",
+    "description": "Explore the concept of transparency."
+  },
+  "24": {
+    "title": "Perfectionist's nightmare",
+    "credit": "Sophia (fractal kitty)",
+    "description": "Perfectionist's nightmare."
+  },
+  "25": {
+    "title": "Organic Geometry",
+    "credit": "Manuel Larino",
+    "description": "Forms that look or act organic but are constructed entirely from geometric shapes."
+  },
+  "26": {
+    "title": "Recursive Grids",
+    "credit": "Piero",
+    "description": "Split the canvas into a grid of some kind and recurse on each cell again and again."
+  },
+  "27": {
+    "title": "Lifeform",
+    "credit": "Manuel Larino",
+    "description": "A shape or structure that behaves as if it's alive or growing."
+  },
+  "28": {
+    "title": "No libraries, no canvas, only HTML elements",
+    "credit": "Piero",
+    "description": "No libraries, no canvas, only HTML elements."
+  },
+  "29": {
+    "title": "Genetic evolution and mutation",
+    "credit": "Monokai",
+    "description": "Genetic evolution and mutation."
+  },
+  "30": {
+    "title": "Its not a bug, its a feature",
+    "credit": "Bart Simons",
+    "description": "Its not a bug, its a feature."
+  },
+  "31": {
+    "title": "GLSL day",
+    "credit": "Piero",
+    "description": "Create an artwork using only shaders."
+  }
+}

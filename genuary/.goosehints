@@ -1,0 +1,66 @@
+# Genuary 2026 Creative Coding Project
+
+This is a **Genuary 2026** creative coding project using p5.js. Genuary is a month-long generative art challenge where you create one piece per day based on prompts.
+
+## Project Structure
+- `prompts.json` - All 31 daily prompts with titles, descriptions, and credits
+- `harness.sh` - CLI tool for managing days (run `./harness.sh help` for commands)
+- `template/` - Starter files (index.html + sketch.js) copied for each new day
+- `days/dayXX/` - Each completed day's work with `index.html`, `sketch.js`, and `output/` folder
+
+## Workflow When User Says "Let's Do Genuary"
+
+1. **Find the day**: Check today's date or ask user. Run `./harness.sh list` to see progress.
+2. **Get the prompt**: Run `./harness.sh prompt <day>` or read from `prompts.json`
+3. **Explain & Pitch**:
+   - Tell user what the prompt is asking for
+   - Explain what creative coding principle they'll learn
+   - Pitch a **whimsical, delightful** idea (think: playful, unexpected, joyful)
+4. **Get approval**: Wait for user to approve or ask for different ideas
+5. **Create the day**: Run `./harness.sh new <day>` to scaffold
+6. **Write the code**: Edit `days/dayXX/sketch.js` with p5.js code
+7. **Verify with Chrome DevTools**:
+   - Navigate to the index.html file in Chrome
+   - Take a screenshot
+   - Evaluate: Does this art match the prompt? Is it delightful?
+   - If not satisfied, iterate on sketch.js
+8. **Save outputs**: Save PNG and GIF to `days/dayXX/output/`
+
+## p5.js Quick Reference
+```javascript
+// Canvas
+createCanvas(800, 800)
+background(r, g, b)
+
+// Shapes
+ellipse(x, y, w, h)
+rect(x, y, w, h)
+line(x1, y1, x2, y2)
+triangle(x1, y1, x2, y2, x3, y3)
+
+// Colors
+fill(r, g, b, a)
+stroke(r, g, b)
+noFill() / noStroke()
+
+// Animation
+frameCount, millis()
+noLoop() // for static art
+
+// Math & Randomness
+random(min, max)
+noise(x, y)
+sin(angle), cos(angle)
+map(val, in1, in2, out1, out2)
+```
+
+## Key Principles
+- **Whimsy first**: Every piece should spark joy
+- **Iterate visually**: Use Chrome DevTools to see the art, don't just imagine it
+- **Save everything**: PNG for stills, GIF for animations
+
+## Chrome DevTools Integration
+Use the chromedevtools extension to:
+- `chromedevtools__navigate_page` to open the index.html
+- `chromedevtools__take_screenshot` to capture the art
+- Evaluate if the visual matches the prompt's intent

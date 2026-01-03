@@ -1,0 +1,20 @@
+# Genuary 2026 - Skills-Based Approach
+
+This project uses a **Goose skill** for Genuary 2026 creative coding.
+
+The skill is located at `.goose/skills/genuary/SKILL.md` and teaches Goose how to:
+- Find and interpret daily prompts from `prompts.json`
+- Pitch whimsical, delightful ideas
+- Create p5.js generative art
+- Verify art visually using Chrome DevTools
+- Save outputs as PNG and GIF
+
+## Quick Start
+Just say "let's do genuary" and the skill takes over!
+
+## Key Difference from Harness Approach
+This version has NO shell script harness. Goose learns the workflow from the skill and figures out the tooling itself. This makes it more adaptable but relies on the skill being well-written.
+
+## Requirements
+- Chrome DevTools extension must be enabled
+- Skills extension must be enabled in Goose config
