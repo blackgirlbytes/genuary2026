@@ -191,13 +191,6 @@ x += (targetX - x) * 0.05;
 
 ### 6. Verify with Chrome DevTools
 
-**First, kill any existing Chrome DevTools instances to avoid conflicts:**
-```bash
-pkill -f "Chrome.*--remote-debugging-port" 2>/dev/null || true
-sleep 1
-```
-
-Then:
 1. Navigate to: `file:///Users/rizel/Documents/agent-experiments/genuary2026/genuary-skills/days/day${DAY}/index.html`
 2. Take a screenshot
 3. **Ask yourself honestly:**

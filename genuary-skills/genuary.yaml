@@ -49,6 +49,8 @@ extensions:
     args:
       - -y
       - chrome-devtools-mcp@latest
+      - --userDataDir
+      - /tmp/genuary-skills-chrome-profile
     timeout: 300
 
 parameters:

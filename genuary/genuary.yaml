@@ -145,13 +145,6 @@ instructions: |
   
   This is CRITICAL - you must visually verify your art:
   
-  **First, kill any existing Chrome DevTools instances to avoid conflicts:**
-  ```bash
-  pkill -f "Chrome.*--remote-debugging-port" 2>/dev/null || true
-  sleep 1
-  ```
-  
-  Then:
   1. Navigate Chrome to: `file:///Users/rizel/Documents/agent-experiments/genuary2026/genuary/days/dayXX/index.html`
   2. Take a screenshot
   3. **Ask yourself HONESTLY:**
@@ -221,6 +214,8 @@ extensions:
     args:
       - -y
       - chrome-devtools-mcp@latest
+      - --userDataDir
+      - /tmp/genuary-harness-chrome-profile
     timeout: 300
 
 parameters:
