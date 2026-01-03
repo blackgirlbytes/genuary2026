@@ -191,7 +191,14 @@ x += (targetX - x) * 0.05;
 
 ### 6. Verify with Chrome DevTools
 
-1. Navigate to: `file:///Users/rizel/Documents/agent-experiments/genuary-skills/days/day${DAY}/index.html`
+**First, kill any existing Chrome DevTools instances to avoid conflicts:**
+```bash
+pkill -f "Chrome.*--remote-debugging-port" 2>/dev/null || true
+sleep 1
+```
+
+Then:
+1. Navigate to: `file:///Users/rizel/Documents/agent-experiments/genuary2026/genuary-skills/days/day${DAY}/index.html`
 2. Take a screenshot
 3. **Ask yourself honestly:**
    - Would I share this on social media?
@@ -204,7 +211,7 @@ x += (targetX - x) * 0.05;
 **IMPORTANT**: Save to the project directory, not current directory!
 
 ```bash
-GENUARY_DIR=~/Documents/agent-experiments/genuary-skills
+GENUARY_DIR=~/Documents/agent-experiments/genuary2026/genuary-skills
 DAY="03"
 OUTPUT_DIR="$GENUARY_DIR/days/day${DAY}/output"
 ```
@@ -231,13 +238,15 @@ Show the user their creation and ask: **"Are you happy with this? Ready to push 
 Once the user confirms they're satisfied (and ONLY then):
 
 ```bash
-cd ~/Documents/agent-experiments/genuary-skills
+cd ~/Documents/agent-experiments/genuary2026/genuary-skills
 git add days/day${DAY}/
 git commit -m "✨ Day ${DAY}: [TITLE] - Genuary 2026"
 git push origin main
 ```
 
 🎉 **Celebrate!** The art is live!
+
+**IMPORTANT:** You MUST complete this step. Do not end the session without pushing to GitHub.
 
 ## Template Customization
 

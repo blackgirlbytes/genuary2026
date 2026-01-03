@@ -145,6 +145,13 @@ instructions: |
   
   This is CRITICAL - you must visually verify your art:
   
+  **First, kill any existing Chrome DevTools instances to avoid conflicts:**
+  ```bash
+  pkill -f "Chrome.*--remote-debugging-port" 2>/dev/null || true
+  sleep 1
+  ```
+  
+  Then:
   1. Navigate Chrome to: `file:///Users/rizel/Documents/agent-experiments/genuary2026/genuary/days/dayXX/index.html`
   2. Take a screenshot
   3. **Ask yourself HONESTLY:**
@@ -182,17 +189,16 @@ instructions: |
   
   Show the user their creation and ask: **"Are you happy with this? Ready to push to GitHub?"**
   
-  **WAIT for explicit confirmation before pushing.**
+  **WAIT for explicit confirmation before pushing.** Do NOT skip this step!
   
   ### STEP 10: Push to GitHub
   
   Once the user confirms they're satisfied (and ONLY then):
   
   ```bash
-  cd /Users/rizel/Documents/agent-experiments/genuary
+  cd /Users/rizel/Documents/agent-experiments/genuary2026/genuary
   git add days/dayXX/
   git commit -m "✨ Day XX: [TITLE] - Genuary 2026"
-  gh repo view --json name -q .name 2>/dev/null || echo "Not a git repo or gh not configured"
   git push origin main
   ```
   
@@ -202,6 +208,8 @@ instructions: |
   ```
   
   🎉 **Celebrate!** The art is live!
+  
+  **IMPORTANT:** You MUST complete this step. Do not end the session without pushing to GitHub.
 
 extensions:
   - type: builtin
