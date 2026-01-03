@@ -203,6 +203,48 @@ instructions: |
   🎉 **Celebrate!** The art is live!
   
   **IMPORTANT:** You MUST complete this step. Do not end the session without pushing to GitHub.
+  
+  ### STEP 11: Export Transcript & Generate Summary
+  
+  **CRITICAL: Do this LAST, after pushing the art to GitHub.**
+  
+  Export the full conversation transcript:
+  ```bash
+  goose session export --format markdown -o /Users/rizel/Documents/agent-experiments/genuary2026/genuary/days/dayXX/transcript.md
+  ```
+  
+  Then create a SUMMARY.md in the same directory with this structure:
+  ```markdown
+  # Day XX: [Prompt Title]
+  
+  ## Prompt
+  - The original Genuary prompt and credit
+  
+  ## Concept
+  - What you decided to create and why (the artistic interpretation)
+  
+  ## Key Decisions
+  - Major creative and technical choices made
+  
+  ## Implementation
+  - p5.js techniques used (color modes, animation approaches, etc.)
+  
+  ## Iterations
+  - Any refinements or changes made during the session
+  
+  ## Final Result
+  - Brief description of what was produced
+  ```
+  
+  Finally, commit and push the transcript and summary:
+  ```bash
+  cd /Users/rizel/Documents/agent-experiments/genuary2026/genuary
+  git add days/dayXX/transcript.md days/dayXX/SUMMARY.md
+  git commit -m "📝 Day XX: Add transcript and summary"
+  git push origin main
+  ```
+  
+  **IMPORTANT:** You MUST complete this step. The transcript captures the creative process for documentation.
 
 extensions:
   - type: builtin
@@ -236,6 +278,9 @@ activities:
   - Open in Chrome and screenshot
   - Iterate until genuinely delightful
   - Save GIF/video and PNG outputs
+  - Push to GitHub
+  - Export transcript and generate summary
+  - Push transcript and summary to GitHub
 
 prompt: |
   🎨 **GENUARY 2026 - Let's Make EXTRAORDINARY Art!**

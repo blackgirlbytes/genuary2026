@@ -27,6 +27,50 @@ instructions: |
   7. Save GIF/video + PNG to output folder
   8. Ask user if they're happy with the result
   9. Push to GitHub (ONLY after user confirms!)
+  10. Export transcript and generate summary (see below)
+  11. Push transcript and summary to GitHub
+  
+  ## STEP 10 & 11: Export Transcript & Generate Summary
+  
+  **CRITICAL: Do this LAST, after pushing the art to GitHub.**
+  
+  Export the full conversation transcript:
+  ```bash
+  goose session export --format markdown -o /Users/rizel/Documents/agent-experiments/genuary2026/genuary-skills/days/dayXX/transcript.md
+  ```
+  
+  Then create a SUMMARY.md in the same directory with this structure:
+  ```markdown
+  # Day XX: [Prompt Title] (Skills Version)
+  
+  ## Prompt
+  - The original Genuary prompt and credit
+  
+  ## Concept
+  - What you decided to create and why (the artistic interpretation)
+  
+  ## Key Decisions
+  - Major creative and technical choices made
+  
+  ## Implementation
+  - p5.js techniques used (color modes, animation approaches, etc.)
+  
+  ## Iterations
+  - Any refinements or changes made during the session
+  
+  ## Final Result
+  - Brief description of what was produced
+  ```
+  
+  Finally, commit and push the transcript and summary:
+  ```bash
+  cd /Users/rizel/Documents/agent-experiments/genuary2026/genuary-skills
+  git add days/dayXX/transcript.md days/dayXX/SUMMARY.md
+  git commit -m "📝 Day XX: Add transcript and summary (skills)"
+  git push origin main
+  ```
+  
+  **IMPORTANT:** You MUST complete this step. The transcript captures the creative process for documentation.
   
   ## Remember
   
@@ -61,6 +105,17 @@ parameters:
 
 activities:
   - message: "🎨 Genuary time! Let's create something EXTRAORDINARY."
+  - Find the day's prompt
+  - Interpret it artistically
+  - Pitch a wild, whimsical idea
+  - Wait for user approval
+  - Create day folder
+  - Write extraordinary p5.js code
+  - Verify with Chrome DevTools
+  - Save GIF/video and PNG outputs
+  - Push to GitHub
+  - Export transcript and generate summary
+  - Push transcript and summary to GitHub
 
 prompt: |
   🎨 **Let's do Genuary!**
