@@ -1,0 +1,14 @@
+# OS files
+.DS_Store
+*.DS_Store
+
+# Node
+node_modules/
+
+# Environment
+.env
+.env.local
+.env*.local
+
+# Vercel
+.vercel

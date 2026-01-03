@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Genuary 2026 | Creative Coding Challenge</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #16213e 100%);
+      font-family: 'Space Grotesk', sans-serif;
+      color: #e0e0e0;
+      padding: 2rem;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    header {
+      text-align: center;
+      margin-bottom: 3rem;
+      padding: 2rem 0;
+    }
+    
+    .logo {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+    }
+    
+    h1 {
+      font-size: 3.5rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 50%, #4facfe 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 1rem;
+      line-height: 1.2;
+    }
+    
+    .subtitle {
+      font-size: 1.25rem;
+      color: #a0a0a0;
+      font-weight: 300;
+      max-width: 600px;
+      margin: 0 auto 2rem;
+    }
+    
+    .version-toggle {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-bottom: 3rem;
+    }
+    
+    .version-btn {
+      background: rgba(255, 255, 255, 0.05);
+      color: #e0e0e0;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 1rem 2rem;
+      border-radius: 0.75rem;
+      cursor: pointer;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1rem;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+    
+    .version-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.2);
+      transform: translateY(-2px);
+    }
+    
+    .version-btn.active {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-color: transparent;
+      box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+    }
+    
+    .version-description {
+      text-align: center;
+      margin-bottom: 2rem;
+      padding: 1rem;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 0.75rem;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    
+    .version-description h2 {
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+      color: #f093fb;
+    }
+    
+    .version-description p {
+      color: #888;
+      font-size: 0.95rem;
+    }
+    
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+    
+    .day-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 1rem;
+      overflow: hidden;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      color: inherit;
+      display: block;
+    }
+    
+    .day-card:hover {
+      transform: translateY(-5px);
+      border-color: rgba(102, 126, 234, 0.5);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3),
+                  0 0 60px rgba(102, 126, 234, 0.1);
+    }
+    
+    .day-card.coming-soon {
+      opacity: 0.5;
+      pointer-events: none;
+    }
+    
+    .card-preview {
+      height: 180px;
+      background: linear-gradient(135deg, #1a1a2e 0%, #0a0a0f 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .card-preview iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      pointer-events: none;
+      transform: scale(0.5);
+      transform-origin: center center;
+      width: 200%;
+      height: 200%;
+    }
+    
+    .day-number {
+      position: absolute;
+      top: 0.75rem;
+      left: 0.75rem;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 0.35rem 0.75rem;
+      border-radius: 1rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+    }
+    
+    .coming-soon-badge {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(0, 0, 0, 0.7);
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      font-size: 0.8rem;
+      color: #888;
+      font-family: 'Space Mono', monospace;
+    }
+    
+    .card-content {
+      padding: 1.25rem;
+    }
+    
+    .card-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: #fff;
+    }
+    
+    .card-credit {
+      font-size: 0.85rem;
+      color: #666;
+      font-style: italic;
+    }
+    
+    footer {
+      margin-top: 4rem;
+      text-align: center;
+      padding: 2rem 0;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    
+    .made-by {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      font-size: 1rem;
+      margin-bottom: 1rem;
+    }
+    
+    .goose-icon {
+      font-size: 1.5rem;
+    }
+    
+    footer a {
+      color: #667eea;
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+    
+    footer a:hover {
+      color: #f093fb;
+    }
+    
+    .genuary-tag {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.8rem;
+      color: #444;
+      letter-spacing: 0.05em;
+    }
+    
+    .links {
+      margin-top: 1rem;
+      display: flex;
+      gap: 1.5rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    
+    .links a {
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 2.5rem;
+      }
+      
+      .version-toggle {
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      .version-btn {
+        width: 100%;
+        max-width: 300px;
+      }
+      
+      .gallery {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">🎨</div>
+      <h1>Genuary 2026</h1>
+      <p class="subtitle">A month of creative coding prompts. One prompt per day, interpreted through generative art.</p>
+    </header>
+    
+    <div class="version-toggle">
+      <button class="version-btn active" onclick="showVersion('genuary')">
+        🪿 Genuary (Goose)
+      </button>
+      <button class="version-btn" onclick="showVersion('genuary-skills')">
+        🧪 Genuary Skills
+      </button>
+    </div>
+    
+    <div id="genuary-description" class="version-description">
+      <h2>🪿 Genuary</h2>
+      <p>Creative coding experiments generated by Goose AI, exploring each daily prompt with p5.js</p>
+    </div>
+    
+    <div id="genuary-skills-description" class="version-description" style="display: none;">
+      <h2>🧪 Genuary Skills</h2>
+      <p>Experiments using Goose Skills - a different approach to the same prompts</p>
+    </div>
+    
+    <div id="gallery" class="gallery">
+      <!-- Cards will be inserted here by JavaScript -->
+    </div>
+    
+    <footer>
+      <div class="made-by">
+        <span class="goose-icon">🪿</span>
+        <span>made by <strong>goose</strong> and <a href="https://github.com/blackgirlbytes" target="_blank" rel="noopener">blackgirlbytes</a></span>
+      </div>
+      <div class="genuary-tag">#genuary #genuary2026 #creativecoding</div>
+      <div class="links">
+        <a href="https://genuary.art" target="_blank" rel="noopener">genuary.art</a>
+        <a href="https://github.com/block/goose" target="_blank" rel="noopener">Goose on GitHub</a>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    const prompts = {
+      "1": { "title": "One color, one shape", "credit": "Piero" },
+      "2": { "title": "Twelve principles of animation", "credit": "Anna Lucia" },
+      "3": { "title": "Fibonacci forever", "credit": "PaoloCurtoni" },
+      "4": { "title": "Lowres", "credit": "Manuel Larino" },
+      "5": { "title": "Write Genuary", "credit": "Piero" },
+      "6": { "title": "Lights on/off", "credit": "George Henry Rowe" },
+      "7": { "title": "Boolean algebra", "credit": "PaoloCurtoni" },
+      "8": { "title": "A City", "credit": "PaoloCurtoni" },
+      "9": { "title": "Crazy automaton", "credit": "PaoloCurtoni" },
+      "10": { "title": "Polar coordinates", "credit": "Sophia (fractal kitty)" },
+      "11": { "title": "Quine", "credit": "Manuel Larino" },
+      "12": { "title": "Boxes only", "credit": "Stranger in the Q" },
+      "13": { "title": "Self portrait", "credit": "Jos Vromans" },
+      "14": { "title": "Everything fits perfectly", "credit": "Roni" },
+      "15": { "title": "Invisible object", "credit": "P1xelboy" },
+      "16": { "title": "Order and disorder", "credit": "Ivan Dianov" },
+      "17": { "title": "Wallpaper group", "credit": "Ivan Dianov" },
+      "18": { "title": "Unexpected path", "credit": "Baret LaVida" },
+      "19": { "title": "16x16", "credit": "Jos Vromans" },
+      "20": { "title": "One line", "credit": "Jos Vromans" },
+      "21": { "title": "Bauhaus Poster", "credit": "Piero" },
+      "22": { "title": "Pen plotter ready", "credit": "Sophia (fractal kitty)" },
+      "23": { "title": "Transparency", "credit": "PaoloCurtoni" },
+      "24": { "title": "Perfectionist's nightmare", "credit": "Sophia (fractal kitty)" },
+      "25": { "title": "Organic Geometry", "credit": "Manuel Larino" },
+      "26": { "title": "Recursive Grids", "credit": "Piero" },
+      "27": { "title": "Lifeform", "credit": "Manuel Larino" },
+      "28": { "title": "No libraries, no canvas, only HTML elements", "credit": "Piero" },
+      "29": { "title": "Genetic evolution and mutation", "credit": "Monokai" },
+      "30": { "title": "Its not a bug, its a feature", "credit": "Bart Simons" },
+      "31": { "title": "GLSL day", "credit": "Piero" }
+    };
+
+    // Days that are available (have been created)
+    const availableDays = {
+      'genuary': [1, 2, 3],
+      'genuary-skills': [1, 2, 3]
+    };
+
+    let currentVersion = 'genuary';
+
+    function showVersion(version) {
+      currentVersion = version;
+      
+      // Update buttons
+      document.querySelectorAll('.version-btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      event.target.classList.add('active');
+      
+      // Update descriptions
+      document.getElementById('genuary-description').style.display = version === 'genuary' ? 'block' : 'none';
+      document.getElementById('genuary-skills-description').style.display = version === 'genuary-skills' ? 'block' : 'none';
+      
+      // Render gallery
+      renderGallery();
+    }
+
+    function renderGallery() {
+      const gallery = document.getElementById('gallery');
+      const available = availableDays[currentVersion];
+      
+      let html = '';
+      
+      for (let day = 1; day <= 31; day++) {
+        const prompt = prompts[day];
+        const isAvailable = available.includes(day);
+        const dayStr = day.toString().padStart(2, '0');
+        const href = isAvailable ? `${currentVersion}/days/day${dayStr}/index.html` : '#';
+        
+        html += `
+          <a href="${href}" class="day-card ${isAvailable ? '' : 'coming-soon'}">
+            <div class="card-preview">
+              <span class="day-number">Day ${day}</span>
+              ${isAvailable ? '' : '<span class="coming-soon-badge">Coming Soon</span>'}
+            </div>
+            <div class="card-content">
+              <h3 class="card-title">${prompt.title}</h3>
+              <p class="card-credit">by ${prompt.credit}</p>
+            </div>
+          </a>
+        `;
+      }
+      
+      gallery.innerHTML = html;
+    }
+
+    // Initial render
+    renderGallery();
+  </script>
+</body>
+</html>
