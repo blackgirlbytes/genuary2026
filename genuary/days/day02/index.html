@@ -32,6 +32,31 @@
       max-width: 800px;
     }
     
+    .back-button {
+      position: fixed;
+      top: 1.5rem;
+      left: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(255, 255, 255, 0.05);
+      color: #e0e0e0;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 0.75rem 1.25rem;
+      border-radius: 0.5rem;
+      text-decoration: none;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.85rem;
+      transition: all 0.2s ease;
+      z-index: 100;
+    }
+    
+    .back-button:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.2);
+      transform: translateX(-3px);
+    }
+    
     .day-badge {
       display: inline-block;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -155,6 +180,8 @@
   </style>
 </head>
 <body>
+  <a href="../../../index.html" class="back-button">← Back to Gallery</a>
+  
   <header>
     <div class="day-badge">Genuary 2026</div>
     <h1>Day 2: Twelve principles of animation</h1>
@@ -205,11 +232,11 @@
     }
     
     function redrawSketch() {
-      if (typeof setup === 'function') {
-        clear();
-        setup();
-        if (!isPaused) loop();
+      // Use the sketch's reset function if available
+      if (typeof resetG === 'function') {
+        resetG();
       }
+      if (!isPaused) loop();
     }
     
     function startGifRecording() {
@@ -239,9 +266,11 @@
         a.click();
         URL.revokeObjectURL(url);
         gifRecording = false;
+        document.querySelector('button[onclick="startGifRecording()"]').textContent = '🎬 Record GIF';
         console.log('GIF saved!');
       });
       
+      document.querySelector('button[onclick="startGifRecording()"]').textContent = '⏺️ Recording...';
       console.log('Recording GIF... capturing ' + GIF_FRAMES + ' frames');
     }
     
@@ -262,6 +291,7 @@
         
         if (gifFrameCount >= GIF_FRAMES) {
           gifRecording = false;
+          document.querySelector('button[onclick="startGifRecording()"]').textContent = '⏳ Rendering...';
           console.log('Rendering GIF...');
           gif.render();
         }

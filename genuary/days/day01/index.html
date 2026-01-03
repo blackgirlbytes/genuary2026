@@ -32,6 +32,31 @@
       max-width: 800px;
     }
     
+    .back-button {
+      position: fixed;
+      top: 1.5rem;
+      left: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(255, 255, 255, 0.05);
+      color: #e0e0e0;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 0.75rem 1.25rem;
+      border-radius: 0.5rem;
+      text-decoration: none;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.85rem;
+      transition: all 0.2s ease;
+      z-index: 100;
+    }
+    
+    .back-button:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.2);
+      transform: translateX(-3px);
+    }
+    
     .day-badge {
       display: inline-block;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -155,6 +180,8 @@
   </style>
 </head>
 <body>
+  <a href="../../../index.html" class="back-button">← Back to Gallery</a>
+  
   <header>
     <div class="day-badge">Genuary 2026</div>
     <h1>Day 1: One color, one shape</h1>
@@ -198,11 +225,13 @@
     }
     
     function redrawSketch() {
-      if (typeof setup === 'function') {
-        clear();
-        setup();
-        if (!isPaused) loop();
+      // Reset circles array and re-run setup
+      if (typeof circles !== 'undefined') {
+        circles.length = 0;
       }
+      clear();
+      setup();
+      if (!isPaused) loop();
     }
     
     // Keyboard shortcuts
