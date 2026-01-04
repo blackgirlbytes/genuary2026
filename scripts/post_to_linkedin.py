@@ -312,14 +312,14 @@ The entire process is automated from end to end using goose recipes, Agent skill
 
 The left image I made with goose recipes and a shell script
 
-genuary2026.vercel.app/genuary/days/day{day:02d}/
+https://genuary2026.vercel.app/genuary/days/day{day:02d}/
 
 The right image I made with agent skills
 
-genuary2026.vercel.app/genuary-skills/days/day{day:02d}/
+https://genuary2026.vercel.app/genuary-skills/days/day{day:02d}/
 
 My repo has the code AND transcripts with my agent:
-github.com/blackgirlbytes/genuary2026
+https://github.com/blackgirlbytes/genuary2026
 
 I did this to learn agentic coding and participate without heavy commitment.
 
