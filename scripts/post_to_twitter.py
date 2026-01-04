@@ -96,8 +96,13 @@ def create_tweet(client: tweepy.Client, text: str, media_ids: list = None, reply
     if reply_to:
         kwargs["in_reply_to_tweet_id"] = reply_to
     
-    response = client.create_tweet(**kwargs)
-    return {"id": str(response.data["id"])}
+    try:
+        response = client.create_tweet(**kwargs)
+        return {"id": str(response.data["id"])}
+    except tweepy.errors.Forbidden as e:
+        print(f"Forbidden error: {e}")
+        print(f"Response: {e.response.text if hasattr(e, 'response') else 'No response'}")
+        raise
 
 
 def find_output_image(day_folder: Path) -> Path | None:
