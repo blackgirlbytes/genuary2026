@@ -7,12 +7,8 @@ Combines outputs from both /genuary (recipes) and /genuary-skills projects.
 import os
 import sys
 import json
-import hashlib
-import hmac
-import time
 import base64
-import urllib.parse
-import requests
+import tweepy
 from datetime import datetime
 from pathlib import Path
 from io import BytesIO
@@ -24,45 +20,29 @@ except ImportError:
     HAS_PIL = False
 
 
-# Twitter API endpoints
-TWITTER_UPLOAD_API = "https://upload.twitter.com/1.1/media/upload.json"
-TWITTER_TWEET_API = "https://api.twitter.com/2/tweets"
-
 MAX_IMAGE_SIZE = 5242880  # Twitter's 5MB limit for images
 
 
-def get_oauth_header(method: str, url: str, params: dict, credentials: dict) -> str:
-    """Generate OAuth 1.0a header for Twitter API."""
-    oauth_params = {
-        "oauth_consumer_key": credentials["api_key"],
-        "oauth_nonce": base64.b64encode(os.urandom(32)).decode("utf-8").replace("+", "").replace("/", "").replace("=", ""),
-        "oauth_signature_method": "HMAC-SHA1",
-        "oauth_timestamp": str(int(time.time())),
-        "oauth_token": credentials["access_token"],
-        "oauth_version": "1.0",
-    }
+def get_client(credentials: dict) -> tuple[tweepy.Client, tweepy.API]:
+    """Get authenticated Twitter client and API."""
+    # v2 client for tweets
+    client = tweepy.Client(
+        consumer_key=credentials["api_key"],
+        consumer_secret=credentials["api_secret"],
+        access_token=credentials["access_token"],
+        access_token_secret=credentials["access_token_secret"],
+    )
     
-    # Combine all params for signature
-    all_params = {**oauth_params, **params}
-    sorted_params = sorted(all_params.items())
-    param_string = "&".join(f"{urllib.parse.quote(k, safe='')}={urllib.parse.quote(str(v), safe='')}" for k, v in sorted_params)
+    # v1.1 API for media upload
+    auth = tweepy.OAuth1UserHandler(
+        credentials["api_key"],
+        credentials["api_secret"],
+        credentials["access_token"],
+        credentials["access_token_secret"],
+    )
+    api = tweepy.API(auth)
     
-    # Create signature base string
-    base_string = f"{method.upper()}&{urllib.parse.quote(url, safe='')}&{urllib.parse.quote(param_string, safe='')}"
-    
-    # Create signing key
-    signing_key = f"{urllib.parse.quote(credentials['api_secret'], safe='')}&{urllib.parse.quote(credentials['access_token_secret'], safe='')}"
-    
-    # Generate signature
-    signature = base64.b64encode(
-        hmac.new(signing_key.encode(), base_string.encode(), hashlib.sha1).digest()
-    ).decode()
-    
-    oauth_params["oauth_signature"] = signature
-    
-    # Build header
-    header_params = ", ".join(f'{k}="{urllib.parse.quote(str(v), safe="")}"' for k, v in sorted(oauth_params.items()))
-    return f"OAuth {header_params}"
+    return client, api
 
 
 def compress_image(image_path: Path, max_size: int = MAX_IMAGE_SIZE) -> tuple[bytes, str]:
@@ -99,56 +79,25 @@ def compress_image(image_path: Path, max_size: int = MAX_IMAGE_SIZE) -> tuple[by
     return compressed_data, "image/jpeg"
 
 
-def upload_media(credentials: dict, image_path: Path) -> str:
+def upload_media(api: tweepy.API, image_path: Path) -> str:
     """Upload media to Twitter and return media_id."""
-    image_data, mime_type = compress_image(image_path)
-    image_b64 = base64.b64encode(image_data).decode()
-    
-    params = {"media_data": image_b64}
-    auth_header = get_oauth_header("POST", TWITTER_UPLOAD_API, {}, credentials)
-    
-    resp = requests.post(
-        TWITTER_UPLOAD_API,
-        headers={"Authorization": auth_header},
-        data=params,
-    )
-    
-    if not resp.ok:
-        print(f"Error uploading media: {resp.status_code}")
-        print(f"Response: {resp.text}")
-        resp.raise_for_status()
-    
-    return resp.json()["media_id_string"]
+    print(f"Uploading {image_path}...")
+    media = api.media_upload(filename=str(image_path))
+    return media.media_id_string
 
 
-def create_tweet(credentials: dict, text: str, media_ids: list = None, reply_to: str = None) -> dict:
+def create_tweet(client: tweepy.Client, text: str, media_ids: list = None, reply_to: str = None) -> dict:
     """Create a tweet, optionally with media and as a reply."""
-    payload = {"text": text}
+    kwargs = {"text": text}
     
     if media_ids:
-        payload["media"] = {"media_ids": media_ids}
+        kwargs["media_ids"] = media_ids
     
     if reply_to:
-        payload["reply"] = {"in_reply_to_tweet_id": reply_to}
+        kwargs["in_reply_to_tweet_id"] = reply_to
     
-    # Twitter v2 API uses Bearer token style but we need OAuth 1.0a for posting
-    auth_header = get_oauth_header("POST", TWITTER_TWEET_API, {}, credentials)
-    
-    resp = requests.post(
-        TWITTER_TWEET_API,
-        headers={
-            "Authorization": auth_header,
-            "Content-Type": "application/json",
-        },
-        json=payload,
-    )
-    
-    if not resp.ok:
-        print(f"Error creating tweet: {resp.status_code}")
-        print(f"Response: {resp.text}")
-        resp.raise_for_status()
-    
-    return resp.json()["data"]
+    response = client.create_tweet(**kwargs)
+    return {"id": str(response.data["id"])}
 
 
 def find_output_image(day_folder: Path) -> Path | None:
@@ -269,10 +218,14 @@ def main():
     prompt_info = prompts.get(str(day), {})
     prompt_title = prompt_info.get("title", f"Day {day}")
     
+    # Get authenticated client
+    print("Authenticating with Twitter...")
+    client, api = get_client(credentials)
+    
     # Upload images
     print("Uploading images...")
-    genuary_media_id = upload_media(credentials, genuary_image)
-    skills_media_id = upload_media(credentials, skills_image)
+    genuary_media_id = upload_media(api, genuary_image)
+    skills_media_id = upload_media(api, skills_image)
     
     # Create thread
     # Tweet 1: Main intro with both images
@@ -283,7 +236,7 @@ Automated end to end using goose recipes, Agent skills, shell scripts, and githu
 #genuary #genuary{day}"""
     
     print("Creating tweet 1 (intro with both images)...")
-    tweet1 = create_tweet(credentials, tweet1_text, media_ids=[genuary_media_id, skills_media_id])
+    tweet1 = create_tweet(client, tweet1_text, media_ids=[genuary_media_id, skills_media_id])
     tweet1_id = tweet1["id"]
     
     # Tweet 2: Recipe output
@@ -291,14 +244,14 @@ Automated end to end using goose recipes, Agent skills, shell scripts, and githu
 
 genuary2026.vercel.app/genuary/days/day{day:02d}/"""
     print("Creating tweet 2 (recipes)...")
-    tweet2 = create_tweet(credentials, tweet2_text, media_ids=[genuary_media_id], reply_to=tweet1_id)
+    tweet2 = create_tweet(client, tweet2_text, media_ids=[genuary_media_id], reply_to=tweet1_id)
     
     # Tweet 3: Skills output
     tweet3_text = f"""Made this with Agent Skills
 
 genuary2026.vercel.app/genuary-skills/days/day{day:02d}/"""
     print("Creating tweet 3 (skills)...")
-    tweet3 = create_tweet(credentials, tweet3_text, media_ids=[skills_media_id], reply_to=tweet2["id"])
+    tweet3 = create_tweet(client, tweet3_text, media_ids=[skills_media_id], reply_to=tweet2["id"])
     
     # Tweet 4: Repo link
     tweet4_text = """My repo has the code AND transcripts with my agent:
@@ -307,13 +260,13 @@ github.com/blackgirlbytes/genuary2026
 I did this to learn agentic coding and participate without heavy commitment."""
     
     print("Creating tweet 4 (repo link)...")
-    tweet4 = create_tweet(credentials, tweet4_text, reply_to=tweet3["id"])
+    tweet4 = create_tweet(client, tweet4_text, reply_to=tweet3["id"])
     
     # Tweet 5: Context
     tweet5_text = """Although this is heavily automated and built by AI, it still has direction from me. I told goose which AI cliches I did not like and which styles I liked."""
     
     print("Creating tweet 5 (context)...")
-    tweet5 = create_tweet(credentials, tweet5_text, reply_to=tweet4["id"])
+    tweet5 = create_tweet(client, tweet5_text, reply_to=tweet4["id"])
     
     # Tweet 6: Examples
     tweet6_text = """For example, I told goose: You are a creative coder with artistic vision, not just a coding assistant. And I banned Purple-pink-blue gradient that we always see. Lean towards organic movement. 
@@ -321,7 +274,7 @@ I did this to learn agentic coding and participate without heavy commitment."""
 No boring ideas. if your idea sounds boring to you, it IS boring."""
     
     print("Creating tweet 6 (examples)...")
-    create_tweet(credentials, tweet6_text, reply_to=tweet5["id"])
+    create_tweet(client, tweet6_text, reply_to=tweet5["id"])
     
     # Mark as posted
     mark_as_posted(repo_root, day)
