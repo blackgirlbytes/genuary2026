@@ -101,18 +101,18 @@ def create_tweet(client: tweepy.Client, text: str, media_ids: list = None, reply
 
 
 def find_output_image(day_folder: Path) -> Path | None:
-    """Find the best output image in a day's output folder."""
+    """Find the best output image in a day's output folder. Prefer PNG over GIF for Twitter Free tier."""
     output_folder = day_folder / "output"
     if not output_folder.exists():
         return None
     
-    # Twitter has better GIF support (5MB limit)
-    for ext in [".gif", ".png", ".jpg", ".jpeg"]:
+    # Prefer PNG/JPG for Twitter Free tier (GIFs can cause issues)
+    for ext in [".png", ".jpg", ".jpeg", ".gif"]:
         images = list(output_folder.glob(f"*{ext}"))
         if images:
             img = images[0]
             if ext == ".gif" and img.stat().st_size > MAX_IMAGE_SIZE:
-                print(f"GIF too large ({img.stat().st_size} bytes), looking for PNG...")
+                print(f"GIF too large ({img.stat().st_size} bytes), skipping...")
                 continue
             return img
     
