@@ -20,8 +20,10 @@ He'd built harnesses that solved every Advent of Code challenge automatically. T
 
 I wanted to try something similar with Goose, but I also wanted to compare different approaches. So I set up two workflows side by side:
 
-1. **Skills with a Recipe** - Teaching Goose the knowledge, then letting it execute a repeatable workflow
-2. **Skills with a Harness** - Teaching Goose the knowledge, plus giving it shell scripts for scaffolding
+1. **Recipe + Harness** - A recipe that calls shell scripts for deterministic scaffolding
+2. **Recipe + Skill** - A recipe that relies on a skill file (SKILL.md) to teach Goose the workflow
+
+Both approaches used recipes and `.goosehints`. The difference was whether the "how to do things" knowledge lived in shell scripts (harness) or in a skill file that teaches Goose the workflow so it figures out the steps itself.
 
 The key thing: **I didn't spend hours building these systems. Goose set them up.** I just prompted.
 
@@ -95,9 +97,9 @@ Each round of context earned its place. Nothing was added preemptively. This seq
 
 ---
 
-## Skills with a Recipe
+## Recipe + Skill (the `/genuary-skills` approach)
 
-When I paired the Skill with a recipe, Goose handled the workflow execution. Once the recipe and `.goosehints` were in place, it consistently transformed prompts into structured art pieces. My role was to define what "good" meant and correct ambiguous language before it became baked into the workflow.
+When I paired a recipe with a skill file, Goose handled the workflow execution. Once the recipe and `.goosehints` were in place, it consistently transformed prompts into structured art pieces. My role was to define what "good" meant and correct ambiguous language before it became baked into the workflow.
 
 Here's what a typical session looked like:
 
@@ -136,9 +138,9 @@ The downside was that early mistakes persisted. The coral pink incident happened
 
 ---
 
-## Skills with a Harness
+## Recipe + Harness (the `/genuary` approach)
 
-The harness-based approach felt different. Instead of locking in a single workflow, the harness made differences between runs obvious. The shell scripts handled the boring parts (scaffolding, file management), while Goose focused on creativity.
+The harness-based approach felt different. Instead of relying on a skill file to teach Goose the workflow, I had shell scripts that handled the deterministic parts. The harness made differences between runs obvious. The shell scripts handled the boring parts (scaffolding, file management), while Goose focused on creativity.
 
 From the Day 1 transcript:
 
