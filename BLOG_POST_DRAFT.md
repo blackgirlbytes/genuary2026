@@ -31,18 +31,19 @@ The key thing: **I didn't spend hours building these systems. Goose set them up.
 
 ## What Goose Built
 
-When I told Goose I wanted to participate in Genuary with an automated workflow, it created:
+When I told Goose I wanted to participate in Genuary with an automated workflow, it created two different setups. Both use recipes (that's how you invoke a workflow with `/genuary` or `/genuary-skills`), but the recipes are structured very differently.
 
 **For the harness approach (`/genuary`):**
-- A shell script (`harness.sh`) with commands like `./harness.sh prompt today` and `./harness.sh new 3`
-- A recipe file (`genuary.yaml`) defining the full workflow
+- A **fat recipe** (`genuary.yaml` - 304 lines) containing the entire workflow: all the BANNED clichés, step-by-step instructions, code examples, everything
+- A **shell script harness** (`harness.sh`) with commands like `./harness.sh prompt 1` and `./harness.sh new 3`
+- The recipe tells Goose to USE the harness scripts for scaffolding
 - A `.goosehints` file for project context
-- Templates for the HTML and p5.js sketch files
 
 **For the skills approach (`/genuary-skills`):**
-- A `SKILL.md` file teaching Goose the creative coding workflow
-- A simpler recipe that relies on the skill instead of shell scripts
-- The same templates and `.goosehints`
+- A **thin recipe** (`genuary.yaml` - 130 lines) that basically just says "you have the genuary skill loaded, use it"
+- A **skill file** (`SKILL.md`) containing all the creative philosophy, BANNED clichés, workflow, and code examples
+- The recipe is thin because the skill has all the knowledge
+- The same `.goosehints` for project context
 
 Both approaches used Chrome DevTools MCP to create a visual feedback loop: navigate to the sketch, take a screenshot, evaluate if it matches the prompt, iterate if needed.
 
