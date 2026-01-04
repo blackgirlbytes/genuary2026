@@ -1,0 +1,36 @@
+name: Post to Bluesky
+
+on:
+  schedule:
+    # Runs at 2:25 PM EST every day in January
+    # Note: GitHub Actions uses UTC, so 2:25 PM EST = 7:25 PM UTC (or 6:25 PM UTC during DST)
+    - cron: '25 19 * 1 *'
+  workflow_dispatch:
+    inputs:
+      day:
+        description: 'Day number to post (1-31). Leave empty for current day.'
+        required: false
+        type: string
+
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install requests
+
+      - name: Post to Bluesky
+        env:
+          BLUESKY_HANDLE: ${{ secrets.BLUESKY_HANDLE }}
+          BLUESKY_APP_PASSWORD: ${{ secrets.BLUESKY_APP_PASSWORD }}
+          MANUAL_DAY: ${{ github.event.inputs.day }}
+        run: python scripts/post_to_bluesky.py
