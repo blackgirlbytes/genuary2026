@@ -41,7 +41,7 @@ def get_headers(access_token: str, rest_api: bool = False) -> dict:
         "Content-Type": "application/json",
     }
     if rest_api:
-        headers["LinkedIn-Version"] = "202401"
+        headers["LinkedIn-Version"] = "202501"
         headers["X-Restli-Protocol-Version"] = "2.0.0"
     return headers
 
