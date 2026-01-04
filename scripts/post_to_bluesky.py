@@ -270,7 +270,9 @@ def main():
     # Post 1: Main intro with both images
     post1_text = f"""This is not me posting in real time! I wrote and scheduled this post with goose. It's my submission for Genuary day {day}: "{prompt_title}"
 
-The entire process is automated from end to end using goose recipes, Agent skills, shell scripts, and github actions."""
+The entire process is automated from end to end using goose recipes, Agent skills, shell scripts, and github actions.
+
+#genuary #genuary{day}"""
     
     print("Creating post 1 (intro with both images)...")
     post1 = create_post(
