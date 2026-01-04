@@ -1,0 +1,50 @@
+name: Post to Threads
+
+on:
+  schedule:
+    # Runs at 2:40 PM EST every day in January (15 min after Bluesky)
+    # Note: GitHub Actions uses UTC, so 2:40 PM EST = 7:40 PM UTC
+    - cron: '40 19 * 1 *'
+    # Retry at 5:15 PM EST (10:15 PM UTC)
+    - cron: '15 22 * 1 *'
+    # Final retry at 9:15 PM EST (2:15 AM UTC next day)
+    - cron: '15 2 * 1 *'
+  workflow_dispatch:
+    inputs:
+      day:
+        description: 'Day number to post (1-31). Leave empty for current day.'
+        required: false
+        type: string
+
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install requests Pillow
+
+      - name: Post to Threads
+        env:
+          THREADS_ACCESS_TOKEN: ${{ secrets.THREADS_ACCESS_TOKEN }}
+          THREADS_USER_ID: ${{ secrets.THREADS_USER_ID }}
+          MANUAL_DAY: ${{ github.event.inputs.day }}
+        run: python scripts/post_to_threads.py
+
+      - name: Commit posted status
+        run: |
+          if [ -f .posted_days_threads ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add .posted_days_threads
+            git diff --staged --quiet || git commit -m "Track Threads post for day"
+            git push
+          fi
