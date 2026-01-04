@@ -1,0 +1,40 @@
+name: Post to LinkedIn
+
+on:
+  schedule:
+    # Runs at 2:35 PM EST every day in January (10 min after Bluesky)
+    # Note: GitHub Actions uses UTC, so 2:35 PM EST = 7:35 PM UTC
+    - cron: '35 19 * 1 *'
+    # Retry at 5:10 PM EST (10:10 PM UTC)
+    - cron: '10 22 * 1 *'
+    # Final retry at 9:10 PM EST (2:10 AM UTC next day)
+    - cron: '10 2 * 1 *'
+  workflow_dispatch:
+    inputs:
+      day:
+        description: 'Day number to post (1-31). Leave empty for current day.'
+        required: false
+        type: string
+
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install requests Pillow
+
+      - name: Post to LinkedIn
+        env:
+          LINKEDIN_ACCESS_TOKEN: ${{ secrets.LINKEDIN_ACCESS_TOKEN }}
+          LINKEDIN_PERSON_URN: ${{ secrets.LINKEDIN_PERSON_URN }}
+          MANUAL_DAY: ${{ github.event.inputs.day }}
+        run: python scripts/post_to_linkedin.py
