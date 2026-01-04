@@ -38,3 +38,13 @@ jobs:
           LINKEDIN_PERSON_URN: ${{ secrets.LINKEDIN_PERSON_URN }}
           MANUAL_DAY: ${{ github.event.inputs.day }}
         run: python scripts/post_to_linkedin.py
+
+      - name: Commit posted status
+        run: |
+          if [ -f .posted_days_linkedin ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add .posted_days_linkedin
+            git diff --staged --quiet || git commit -m "Track LinkedIn post for day"
+            git push
+          fi
