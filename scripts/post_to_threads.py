@@ -149,7 +149,7 @@ def create_carousel_container(access_token: str, user_id: str, children_ids: lis
         params["reply_to_id"] = reply_to_id
     
     if topic_tag:
-        params["text_post_app_info"] = json.dumps({"tagged_topic_display_name": topic_tag})
+        params["topic_tag"] = topic_tag
     
     resp = requests.post(f"{THREADS_API}/{user_id}/threads", params=params)
     
