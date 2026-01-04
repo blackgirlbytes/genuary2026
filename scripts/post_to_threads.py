@@ -351,12 +351,12 @@ The entire process is automated from end to end using goose recipes, Agent skill
     item1_id = create_media_container(access_token, user_id, genuary_url, is_carousel_item=True)
     item2_id = create_media_container(access_token, user_id, skills_url, is_carousel_item=True)
     
-    # Wait for items to process
-    print("Waiting for carousel items to process...")
-    if not wait_for_container(access_token, item1_id):
+    # Wait for items to process (longer for GIFs)
+    print("Waiting for carousel items to process (GIFs take longer)...")
+    if not wait_for_container(access_token, item1_id, max_wait=120):
         print("Failed to process first carousel item")
         sys.exit(1)
-    if not wait_for_container(access_token, item2_id):
+    if not wait_for_container(access_token, item2_id, max_wait=120):
         print("Failed to process second carousel item")
         sys.exit(1)
     
@@ -364,9 +364,15 @@ The entire process is automated from end to end using goose recipes, Agent skill
     print("Creating carousel post with AI threads topic tag...")
     carousel_id = create_carousel_container(access_token, user_id, [item1_id, item2_id], text=post1_text, topic_tag="AI threads")
     
-    if not wait_for_container(access_token, carousel_id):
+    # Wait longer for carousel - GIFs take more time to process
+    print("Waiting for carousel to process (this may take a while for GIFs)...")
+    if not wait_for_container(access_token, carousel_id, max_wait=120):
         print("Failed to process carousel")
         sys.exit(1)
+    
+    # Extra delay before publishing to ensure processing is complete
+    print("Waiting a bit more before publishing...")
+    time.sleep(10)
     
     # Publish carousel
     print("Publishing carousel...")
