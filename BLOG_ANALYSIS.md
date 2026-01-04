@@ -4,6 +4,14 @@
 
 This document analyzes the conversations and process of using Goose (an AI agent) to participate in Genuary 2026 - a month-long generative art challenge. The goal is to help readers understand how they can use agentic workflows for creative coding projects.
 
+## The Origin Story
+
+This project started because of a friend. Andrew (Zig on Discord) had been doing Genuary using Claude Code and mentioned the concept of "harnesses" - deterministic scripts that let an AI iterate reliably on a task. He'd built harnesses that solved every Advent of Code and AdventJS challenge automatically.
+
+Inspired by that conversation, **the entire system documented here was built in just a few hours** - recipes, skills, shell scripts, Chrome DevTools integration, and social media automation. The goal was to catch up on the first few days of Genuary while learning how agentic workflows actually work in practice.
+
+The speed of setup is part of the point: once you understand the pattern (deterministic tools + AI creativity + feedback loops), you can apply it to almost any repeatable creative task.
+
 ---
 
 ## What is a "Harness"?
