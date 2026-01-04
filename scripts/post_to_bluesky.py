@@ -193,7 +193,7 @@ def create_post(session: dict, text: str, reply_to: dict = None, images: list = 
 
 
 def find_output_image(day_folder: Path) -> Path | None:
-    """Find the best output image in a day's output folder. Prefer GIF over PNG."""
+    """Find the best output image in a day's output folder. Prefer GIF over PNG, but skip large GIFs."""
     output_folder = day_folder / "output"
     if not output_folder.exists():
         return None
@@ -202,7 +202,12 @@ def find_output_image(day_folder: Path) -> Path | None:
     for ext in [".gif", ".png", ".jpg", ".jpeg"]:
         images = list(output_folder.glob(f"*{ext}"))
         if images:
-            return images[0]
+            img = images[0]
+            # Skip GIFs that are too large (Bluesky limit is ~1MB)
+            if ext == ".gif" and img.stat().st_size > MAX_IMAGE_SIZE:
+                print(f"GIF too large ({img.stat().st_size} bytes), looking for PNG instead...")
+                continue
+            return img
     
     return None
 
