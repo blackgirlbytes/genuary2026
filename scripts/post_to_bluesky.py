@@ -291,7 +291,9 @@ The entire process is automated from end to end using goose recipes, Agent skill
     reply_to = {"root": root_ref, "parent": root_ref}
     
     # Post 2: Recipe output
-    post2_text = "Made this with goose recipes and a shell script"
+    post2_text = f"""Made this with goose recipes and a shell script
+
+genuary2026.vercel.app/genuary/days/day{day:02d}/"""
     print("Creating post 2 (recipes)...")
     post2 = create_post(
         session, 
@@ -304,7 +306,9 @@ The entire process is automated from end to end using goose recipes, Agent skill
     reply_to = {"root": root_ref, "parent": {"uri": post2["uri"], "cid": post2["cid"]}}
     
     # Post 3: Skills output
-    post3_text = "Made this with Agent Skills"
+    post3_text = f"""Made this with Agent Skills
+
+genuary2026.vercel.app/genuary-skills/days/day{day:02d}/"""
     print("Creating post 3 (skills)...")
     post3 = create_post(
         session,
