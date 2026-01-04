@@ -10,10 +10,18 @@ import json
 import requests
 from datetime import datetime
 from pathlib import Path
+from io import BytesIO
+
+try:
+    from PIL import Image
+    HAS_PIL = True
+except ImportError:
+    HAS_PIL = False
 
 
 # Bluesky API endpoints
 BSKY_API = "https://bsky.social/xrpc"
+MAX_IMAGE_SIZE = 1000000  # Bluesky's 1MB limit
 
 
 def get_session(handle: str, app_password: str) -> dict:
@@ -26,20 +34,68 @@ def get_session(handle: str, app_password: str) -> dict:
     return resp.json()
 
 
-def upload_image(session: dict, image_path: Path) -> dict:
-    """Upload an image to Bluesky and return the blob reference."""
+def compress_image(image_path: Path, max_size: int = MAX_IMAGE_SIZE) -> tuple[bytes, str]:
+    """Compress an image to fit within max_size bytes. Returns (data, mime_type)."""
     with open(image_path, "rb") as f:
         image_data = f.read()
     
-    # Determine mime type
     suffix = image_path.suffix.lower()
-    mime_types = {
-        ".png": "image/png",
-        ".jpg": "image/jpeg",
-        ".jpeg": "image/jpeg",
-        ".gif": "image/gif",
-    }
-    mime_type = mime_types.get(suffix, "image/png")
+    
+    # GIFs cannot be easily compressed, return as-is
+    if suffix == ".gif":
+        return image_data, "image/gif"
+    
+    # If already under limit, return as-is
+    if len(image_data) <= max_size:
+        mime_types = {".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg"}
+        return image_data, mime_types.get(suffix, "image/png")
+    
+    # Need to compress
+    if not HAS_PIL:
+        print(f"Warning: Image {image_path} is {len(image_data)} bytes (>{max_size}), but PIL not available for compression")
+        return image_data, "image/png"
+    
+    print(f"Compressing {image_path} ({len(image_data)} bytes)...")
+    
+    img = Image.open(image_path)
+    
+    # Convert to RGB if necessary (for JPEG)
+    if img.mode in ('RGBA', 'P'):
+        img = img.convert('RGB')
+    
+    # Try progressively lower quality
+    for quality in [85, 70, 55, 40, 25]:
+        buffer = BytesIO()
+        img.save(buffer, format='JPEG', quality=quality, optimize=True)
+        compressed_data = buffer.getvalue()
+        
+        if len(compressed_data) <= max_size:
+            print(f"Compressed to {len(compressed_data)} bytes (quality={quality})")
+            return compressed_data, "image/jpeg"
+    
+    # If still too big, resize
+    scale = 0.8
+    while scale > 0.2:
+        new_size = (int(img.width * scale), int(img.height * scale))
+        resized = img.resize(new_size, Image.Resampling.LANCZOS)
+        
+        buffer = BytesIO()
+        resized.save(buffer, format='JPEG', quality=50, optimize=True)
+        compressed_data = buffer.getvalue()
+        
+        if len(compressed_data) <= max_size:
+            print(f"Resized to {new_size} and compressed to {len(compressed_data)} bytes")
+            return compressed_data, "image/jpeg"
+        
+        scale -= 0.1
+    
+    print(f"Warning: Could not compress image below {max_size} bytes")
+    return compressed_data, "image/jpeg"
+
+
+def upload_image(session: dict, image_path: Path) -> dict:
+    """Upload an image to Bluesky and return the blob reference."""
+    image_data, mime_type = compress_image(image_path)
     
     resp = requests.post(
         f"{BSKY_API}/com.atproto.repo.uploadBlob",
@@ -81,7 +137,10 @@ def create_post(session: dict, text: str, reply_to: dict = None, images: list = 
             "record": record,
         },
     )
-    resp.raise_for_status()
+    if not resp.ok:
+        print(f"Error creating post: {resp.status_code}")
+        print(f"Response: {resp.text}")
+        resp.raise_for_status()
     return resp.json()
 
 
