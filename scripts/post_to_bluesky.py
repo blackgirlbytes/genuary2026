@@ -330,7 +330,18 @@ I did this to learn agentic coding and participate without heavy commitment."""
     post5_text = """Although this is heavily automated and built by AI, it still has direction from me. I told goose which AI cliches I did not like and which styles I liked."""
     
     print("Creating post 5 (context)...")
-    create_post(session, post5_text, reply_to=reply_to)
+    post5 = create_post(session, post5_text, reply_to=reply_to)
+    
+    # Update reply reference
+    reply_to = {"root": root_ref, "parent": {"uri": post5["uri"], "cid": post5["cid"]}}
+    
+    # Post 6: Examples of direction
+    post6_text = """For example, I told goose: You are a creative coder with artistic vision, not just a coding assistant. And I banned Purple-pink-blue gradient that we always see. Lean towards organic movement. 
+
+And when we come up with what to build. No boring ideas. if your idea sounds boring to you, it IS boring."""
+    
+    print("Creating post 6 (examples)...")
+    create_post(session, post6_text, reply_to=reply_to)
     
     # Mark as posted
     mark_as_posted(repo_root, day)
