@@ -360,9 +360,9 @@ The entire process is automated from end to end using goose recipes, Agent skill
         print("Failed to process second carousel item")
         sys.exit(1)
     
-    # Create carousel container with AI topic tag
-    print("Creating carousel post with AI topic tag...")
-    carousel_id = create_carousel_container(access_token, user_id, [item1_id, item2_id], text=post1_text, topic_tag="AI")
+    # Create carousel container with AI threads topic tag
+    print("Creating carousel post with AI threads topic tag...")
+    carousel_id = create_carousel_container(access_token, user_id, [item1_id, item2_id], text=post1_text, topic_tag="AI threads")
     
     if not wait_for_container(access_token, carousel_id):
         print("Failed to process carousel")
@@ -379,7 +379,7 @@ The entire process is automated from end to end using goose recipes, Agent skill
     # Post 2: Recipe output (reply)
     post2_text = f"""Made this with goose recipes and a shell script
 
-genuary2026.vercel.app/genuary/days/day{day:02d}/"""
+Click to see the animation in action: genuary2026.vercel.app/genuary/days/day{day:02d}/"""
     
     print("Creating post 2 (recipes)...")
     container2_id = create_media_container(access_token, user_id, genuary_url, text=post2_text, reply_to_id=post1_id)
@@ -394,7 +394,7 @@ genuary2026.vercel.app/genuary/days/day{day:02d}/"""
     # Post 3: Skills output (reply)
     post3_text = f"""Made this with Agent Skills
 
-genuary2026.vercel.app/genuary-skills/days/day{day:02d}/"""
+Click to see the animation in action: genuary2026.vercel.app/genuary-skills/days/day{day:02d}/"""
     
     print("Creating post 3 (skills)...")
     container3_id = create_media_container(access_token, user_id, skills_url, text=post3_text, reply_to_id=post2_id)
