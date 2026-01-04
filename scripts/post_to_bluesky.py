@@ -208,13 +208,20 @@ def main():
     skills_blob = upload_image(session, skills_image)
     
     # Create thread
-    # Post 1: Main intro
+    # Post 1: Main intro with both images
     post1_text = f"""This is not me posting in real time! I wrote and scheduled this post with goose. It's my submission for Genuary day {day}: "{prompt_title}"
 
 The entire process is automated from end to end using goose recipes, Agent skills, shell scripts, and github actions."""
     
-    print("Creating post 1 (intro)...")
-    post1 = create_post(session, post1_text)
+    print("Creating post 1 (intro with both images)...")
+    post1 = create_post(
+        session, 
+        post1_text,
+        images=[
+            {"blob": genuary_blob, "alt": f"Genuary day {day} created with goose recipes"},
+            {"blob": skills_blob, "alt": f"Genuary day {day} created with Agent Skills"},
+        ]
+    )
     post1_uri = post1["uri"]
     post1_cid = post1["cid"]
     
