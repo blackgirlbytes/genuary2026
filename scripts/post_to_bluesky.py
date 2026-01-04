@@ -7,6 +7,7 @@ Combines outputs from both /genuary (recipes) and /genuary-skills projects.
 import os
 import sys
 import json
+import re
 import requests
 from datetime import datetime
 from pathlib import Path
@@ -109,6 +110,48 @@ def upload_image(session: dict, image_path: Path) -> dict:
     return resp.json()["blob"]
 
 
+def extract_facets(text: str) -> list:
+    """Extract links and hashtags from text and return facets for Bluesky rich text."""
+    facets = []
+    
+    # Find URLs (simple pattern for common URLs)
+    url_pattern = r'(https?://[^\s]+|[a-zA-Z0-9][-a-zA-Z0-9]*\.[a-zA-Z]{2,}[^\s]*)'
+    for match in re.finditer(url_pattern, text):
+        url = match.group(0)
+        # Add https:// if missing for the uri field
+        uri = url if url.startswith('http') else f'https://{url}'
+        # Remove trailing punctuation that's not part of URL
+        if uri.endswith('/'):
+            pass  # keep trailing slash
+        elif uri[-1] in '.,;:!?)':
+            uri = uri[:-1]
+            url = url[:-1]
+        
+        start = text.encode('utf-8').find(url.encode('utf-8'))
+        end = start + len(url.encode('utf-8'))
+        
+        facets.append({
+            "index": {"byteStart": start, "byteEnd": end},
+            "features": [{"$type": "app.bsky.richtext.facet#link", "uri": uri}]
+        })
+    
+    # Find hashtags
+    hashtag_pattern = r'#(\w+)'
+    for match in re.finditer(hashtag_pattern, text):
+        tag = match.group(0)  # includes #
+        tag_name = match.group(1)  # without #
+        
+        start = text.encode('utf-8').find(tag.encode('utf-8'))
+        end = start + len(tag.encode('utf-8'))
+        
+        facets.append({
+            "index": {"byteStart": start, "byteEnd": end},
+            "features": [{"$type": "app.bsky.richtext.facet#tag", "tag": tag_name}]
+        })
+    
+    return facets
+
+
 def create_post(session: dict, text: str, reply_to: dict = None, images: list = None) -> dict:
     """Create a post on Bluesky, optionally as a reply with images."""
     now = datetime.utcnow().isoformat().replace("+00:00", "") + "Z"
@@ -118,6 +161,11 @@ def create_post(session: dict, text: str, reply_to: dict = None, images: list = 
         "text": text,
         "createdAt": now,
     }
+    
+    # Add facets for clickable links and hashtags
+    facets = extract_facets(text)
+    if facets:
+        record["facets"] = facets
     
     if reply_to:
         record["reply"] = reply_to
