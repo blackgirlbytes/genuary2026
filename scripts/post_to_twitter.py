@@ -23,26 +23,15 @@ except ImportError:
 MAX_IMAGE_SIZE = 5242880  # Twitter's 5MB limit for images
 
 
-def get_client(credentials: dict) -> tuple[tweepy.Client, tweepy.API]:
-    """Get authenticated Twitter client and API."""
-    # v2 client for tweets
-    client = tweepy.Client(
-        consumer_key=credentials["api_key"],
-        consumer_secret=credentials["api_secret"],
-        access_token=credentials["access_token"],
-        access_token_secret=credentials["access_token_secret"],
-    )
-    
-    # v1.1 API for media upload
+def get_api(credentials: dict) -> tweepy.API:
+    """Get authenticated Twitter API (v1.1)."""
     auth = tweepy.OAuth1UserHandler(
         credentials["api_key"],
         credentials["api_secret"],
         credentials["access_token"],
         credentials["access_token_secret"],
     )
-    api = tweepy.API(auth)
-    
-    return client, api
+    return tweepy.API(auth)
 
 
 def compress_image(image_path: Path, max_size: int = MAX_IMAGE_SIZE) -> tuple[bytes, str]:
@@ -86,18 +75,19 @@ def upload_media(api: tweepy.API, image_path: Path) -> str:
     return media.media_id_string
 
 
-def create_tweet(client: tweepy.Client, text: str, media_ids: list = None, reply_to: str = None) -> dict:
-    """Create a tweet, optionally with media and as a reply."""
-    kwargs = {"text": text}
+def create_tweet(api: tweepy.API, text: str, media_ids: list = None, reply_to: str = None) -> dict:
+    """Create a tweet using v1.1 API, optionally with media and as a reply."""
+    kwargs = {"status": text}
     
     if media_ids:
         kwargs["media_ids"] = media_ids
     
     if reply_to:
-        kwargs["in_reply_to_tweet_id"] = reply_to
+        kwargs["in_reply_to_status_id"] = reply_to
+        kwargs["auto_populate_reply_metadata"] = True
     
-    response = client.create_tweet(**kwargs)
-    return {"id": str(response.data["id"])}
+    response = api.update_status(**kwargs)
+    return {"id": str(response.id)}
 
 
 def find_output_image(day_folder: Path) -> Path | None:
@@ -218,9 +208,9 @@ def main():
     prompt_info = prompts.get(str(day), {})
     prompt_title = prompt_info.get("title", f"Day {day}")
     
-    # Get authenticated client
+    # Get authenticated API
     print("Authenticating with Twitter...")
-    client, api = get_client(credentials)
+    api = get_api(credentials)
     
     # Upload images
     print("Uploading images...")
@@ -236,7 +226,7 @@ Automated end to end using goose recipes, Agent skills, shell scripts, and githu
 #genuary #genuary{day}"""
     
     print("Creating tweet 1 (intro with both images)...")
-    tweet1 = create_tweet(client, tweet1_text, media_ids=[genuary_media_id, skills_media_id])
+    tweet1 = create_tweet(api, tweet1_text, media_ids=[genuary_media_id, skills_media_id])
     tweet1_id = tweet1["id"]
     
     # Tweet 2: Recipe output
@@ -244,14 +234,14 @@ Automated end to end using goose recipes, Agent skills, shell scripts, and githu
 
 genuary2026.vercel.app/genuary/days/day{day:02d}/"""
     print("Creating tweet 2 (recipes)...")
-    tweet2 = create_tweet(client, tweet2_text, media_ids=[genuary_media_id], reply_to=tweet1_id)
+    tweet2 = create_tweet(api, tweet2_text, media_ids=[genuary_media_id], reply_to=tweet1_id)
     
     # Tweet 3: Skills output
     tweet3_text = f"""Made this with Agent Skills
 
 genuary2026.vercel.app/genuary-skills/days/day{day:02d}/"""
     print("Creating tweet 3 (skills)...")
-    tweet3 = create_tweet(client, tweet3_text, media_ids=[skills_media_id], reply_to=tweet2["id"])
+    tweet3 = create_tweet(api, tweet3_text, media_ids=[skills_media_id], reply_to=tweet2["id"])
     
     # Tweet 4: Repo link
     tweet4_text = """My repo has the code AND transcripts with my agent:
@@ -260,13 +250,13 @@ github.com/blackgirlbytes/genuary2026
 I did this to learn agentic coding and participate without heavy commitment."""
     
     print("Creating tweet 4 (repo link)...")
-    tweet4 = create_tweet(client, tweet4_text, reply_to=tweet3["id"])
+    tweet4 = create_tweet(api, tweet4_text, reply_to=tweet3["id"])
     
     # Tweet 5: Context
     tweet5_text = """Although this is heavily automated and built by AI, it still has direction from me. I told goose which AI cliches I did not like and which styles I liked."""
     
     print("Creating tweet 5 (context)...")
-    tweet5 = create_tweet(client, tweet5_text, reply_to=tweet4["id"])
+    tweet5 = create_tweet(api, tweet5_text, reply_to=tweet4["id"])
     
     # Tweet 6: Examples
     tweet6_text = """For example, I told goose: You are a creative coder with artistic vision, not just a coding assistant. And I banned Purple-pink-blue gradient that we always see. Lean towards organic movement. 
@@ -274,7 +264,7 @@ I did this to learn agentic coding and participate without heavy commitment."""
 No boring ideas. if your idea sounds boring to you, it IS boring."""
     
     print("Creating tweet 6 (examples)...")
-    create_tweet(client, tweet6_text, reply_to=tweet5["id"])
+    create_tweet(api, tweet6_text, reply_to=tweet5["id"])
     
     # Mark as posted
     mark_as_posted(repo_root, day)
