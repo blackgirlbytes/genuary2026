@@ -3,8 +3,12 @@ name: Post to Bluesky
 on:
   schedule:
     # Runs at 2:25 PM EST every day in January
-    # Note: GitHub Actions uses UTC, so 2:25 PM EST = 7:25 PM UTC (or 6:25 PM UTC during DST)
+    # Note: GitHub Actions uses UTC, so 2:25 PM EST = 7:25 PM UTC
     - cron: '25 19 * 1 *'
+    # Retry at 5:00 PM EST (10:00 PM UTC) if first attempt missed
+    - cron: '0 22 * 1 *'
+    # Final retry at 9:00 PM EST (2:00 AM UTC next day) 
+    - cron: '0 2 * 1 *'
   workflow_dispatch:
     inputs:
       day:
