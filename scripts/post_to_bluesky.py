@@ -314,14 +314,23 @@ The entire process is automated from end to end using goose recipes, Agent skill
     # Update reply reference
     reply_to = {"root": root_ref, "parent": {"uri": post3["uri"], "cid": post3["cid"]}}
     
-    # Post 4: Repo link and context
-    post4_text = """My repo includes the code AND transcripts with my agent:
-https://github.com/blackgirlbytes/genuary2026
+    # Post 4: Repo link
+    post4_text = """My repo has the code AND transcripts with my agent:
+github.com/blackgirlbytes/genuary2026
 
-I did this to teach myself more about agentic coding and participate without heavy commitment. Although this is heavily automated and built by AI, it still has direction from me. I told goose which AI cliches I did not like and which styles I liked."""
+I did this to learn agentic coding and participate without heavy commitment."""
     
-    print("Creating post 4 (context)...")
-    create_post(session, post4_text, reply_to=reply_to)
+    print("Creating post 4 (repo link)...")
+    post4 = create_post(session, post4_text, reply_to=reply_to)
+    
+    # Update reply reference
+    reply_to = {"root": root_ref, "parent": {"uri": post4["uri"], "cid": post4["cid"]}}
+    
+    # Post 5: More context
+    post5_text = """Although this is heavily automated and built by AI, it still has direction from me. I told goose which AI cliches I did not like and which styles I liked."""
+    
+    print("Creating post 5 (context)...")
+    create_post(session, post5_text, reply_to=reply_to)
     
     # Mark as posted
     mark_as_posted(repo_root, day)
