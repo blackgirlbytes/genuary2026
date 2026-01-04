@@ -39,10 +39,10 @@ def get_headers(access_token: str, rest_api: bool = False) -> dict:
     headers = {
         "Authorization": f"Bearer {access_token}",
         "Content-Type": "application/json",
-        "X-Restli-Protocol-Version": "2.0.0",
     }
     if rest_api:
         headers["LinkedIn-Version"] = "202401"
+        headers["X-Restli-Protocol-Version"] = "2.0.0"
     return headers
 
 
@@ -96,26 +96,19 @@ def compress_image(image_path: Path, max_size: int = MAX_IMAGE_SIZE) -> tuple[by
     return compressed_data, "image/jpeg"
 
 
-def register_image_upload(access_token: str, person_urn: str) -> dict:
-    """Register an image upload with LinkedIn and get upload URL."""
-    url = f"{LINKEDIN_API}/assets?action=registerUpload"
+def initialize_image_upload(access_token: str, person_urn: str) -> dict:
+    """Initialize an image upload with LinkedIn REST API and get upload URL."""
+    url = f"{LINKEDIN_REST_API}/images?action=initializeUpload"
     
     payload = {
-        "registerUploadRequest": {
-            "recipes": ["urn:li:digitalmediaRecipe:feedshare-image"],
-            "owner": person_urn,
-            "serviceRelationships": [
-                {
-                    "relationshipType": "OWNER",
-                    "identifier": "urn:li:userGeneratedContent"
-                }
-            ]
+        "initializeUploadRequest": {
+            "owner": person_urn
         }
     }
     
-    resp = requests.post(url, headers=get_headers(access_token), json=payload)
+    resp = requests.post(url, headers=get_headers(access_token, rest_api=True), json=payload)
     if not resp.ok:
-        print(f"Error registering upload: {resp.status_code}")
+        print(f"Error initializing upload: {resp.status_code}")
         print(f"Response: {resp.text}")
         resp.raise_for_status()
     
@@ -123,12 +116,12 @@ def register_image_upload(access_token: str, person_urn: str) -> dict:
 
 
 def upload_image(access_token: str, person_urn: str, image_path: Path) -> str:
-    """Upload an image to LinkedIn and return the asset URN."""
-    # Step 1: Register the upload
-    register_response = register_image_upload(access_token, person_urn)
+    """Upload an image to LinkedIn and return the image URN."""
+    # Step 1: Initialize the upload
+    init_response = initialize_image_upload(access_token, person_urn)
     
-    upload_url = register_response["value"]["uploadMechanism"]["com.linkedin.digitalmedia.uploading.MediaUploadHttpRequest"]["uploadUrl"]
-    asset_urn = register_response["value"]["asset"]
+    upload_url = init_response["value"]["uploadUrl"]
+    image_urn = init_response["value"]["image"]
     
     # Step 2: Upload the image binary
     image_data, mime_type = compress_image(image_path)
@@ -144,49 +137,43 @@ def upload_image(access_token: str, person_urn: str, image_path: Path) -> str:
         print(f"Response: {resp.text}")
         resp.raise_for_status()
     
-    print(f"Uploaded {image_path.name} -> {asset_urn}")
-    return asset_urn
+    print(f"Uploaded {image_path.name} -> {image_urn}")
+    return image_urn
 
 
 def create_post(access_token: str, person_urn: str, text: str, image_urns: list = None) -> dict:
     """Create a post on LinkedIn with optional images."""
-    url = f"{LINKEDIN_API}/ugcPosts"
-    
-    # Build media array if images provided
-    media = []
-    if image_urns:
-        for urn in image_urns:
-            media.append({
-                "status": "READY",
-                "description": {"text": "Genuary 2026 generative art"},
-                "media": urn,
-                "title": {"text": "Genuary Art"}
-            })
+    url = f"{LINKEDIN_REST_API}/posts"
     
     payload = {
         "author": person_urn,
-        "lifecycleState": "PUBLISHED",
-        "specificContent": {
-            "com.linkedin.ugc.ShareContent": {
-                "shareCommentary": {"text": text},
-                "shareMediaCategory": "IMAGE" if media else "NONE",
-            }
+        "commentary": text,
+        "visibility": "PUBLIC",
+        "distribution": {
+            "feedDistribution": "MAIN_FEED",
+            "targetEntities": [],
+            "thirdPartyDistributionChannels": []
         },
-        "visibility": {
-            "com.linkedin.ugc.MemberNetworkVisibility": "PUBLIC"
-        }
+        "lifecycleState": "PUBLISHED",
+        "isReshareDisabledByAuthor": False
     }
     
-    if media:
-        payload["specificContent"]["com.linkedin.ugc.ShareContent"]["media"] = media
+    if image_urns:
+        payload["content"] = {
+            "multiImage": {
+                "images": [{"id": urn} for urn in image_urns]
+            }
+        }
     
-    resp = requests.post(url, headers=get_headers(access_token), json=payload)
+    resp = requests.post(url, headers=get_headers(access_token, rest_api=True), json=payload)
     if not resp.ok:
         print(f"Error creating post: {resp.status_code}")
         print(f"Response: {resp.text}")
         resp.raise_for_status()
     
-    return resp.json()
+    # REST API returns the post URN in the x-restli-id header
+    post_id = resp.headers.get("x-restli-id", resp.text)
+    return {"id": post_id}
 
 
 def find_output_image(day_folder: Path) -> Path | None:
