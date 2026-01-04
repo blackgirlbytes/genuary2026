@@ -1,0 +1,41 @@
+name: Post to Twitter
+
+on:
+  schedule:
+    # Runs at 2:30 PM EST every day in January (5 min after Bluesky)
+    - cron: '30 19 * 1 *'
+    # Retry at 5:05 PM EST
+    - cron: '5 22 * 1 *'
+    # Final retry at 9:05 PM EST
+    - cron: '5 2 * 1 *'
+  workflow_dispatch:
+    inputs:
+      day:
+        description: 'Day number to post (1-31). Leave empty for current day.'
+        required: false
+        type: string
+
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install requests Pillow
+
+      - name: Post to Twitter
+        env:
+          TWITTER_API_KEY: ${{ secrets.TWITTER_API_KEY }}
+          TWITTER_API_SECRET: ${{ secrets.TWITTER_API_SECRET }}
+          TWITTER_ACCESS_TOKEN: ${{ secrets.TWITTER_ACCESS_TOKEN }}
+          TWITTER_ACCESS_TOKEN_SECRET: ${{ secrets.TWITTER_ACCESS_TOKEN_SECRET }}
+          MANUAL_DAY: ${{ github.event.inputs.day }}
+        run: python scripts/post_to_twitter.py
