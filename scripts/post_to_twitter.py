@@ -244,21 +244,24 @@ This is my Genuary day {day} submission: "{prompt_title}"
     tweet1 = create_tweet(client, tweet1_text, media_ids=[genuary_media_id, skills_media_id])
     tweet1_id = tweet1["id"]
     
-    # Tweet 2: Both outputs
+    # Tweet 2: Recipes output
     tweet2_text = f"""I built this with goose recipes + a shell script.
-genuary2026.vercel.app/genuary/days/day{day:02d}/
-
-Built this one with Agent Skills.
-genuary2026.vercel.app/genuary-skills/days/day{day:02d}/"""
-    print("Creating tweet 2 (both outputs)...")
-    tweet2 = create_tweet(client, tweet2_text, media_ids=[genuary_media_id, skills_media_id], reply_to=tweet1_id)
+genuary2026.vercel.app/genuary/days/day{day:02d}/"""
+    print("Creating tweet 2 (recipes)...")
+    tweet2 = create_tweet(client, tweet2_text, media_ids=[genuary_media_id], reply_to=tweet1_id)
     
-    # Tweet 3: Repo link
-    tweet3_text = """Code + agent transcripts:
+    # Tweet 3: Skills output
+    tweet3_text = f"""Built this one with Agent Skills.
+genuary2026.vercel.app/genuary-skills/days/day{day:02d}/"""
+    print("Creating tweet 3 (skills)...")
+    tweet3 = create_tweet(client, tweet3_text, media_ids=[skills_media_id], reply_to=tweet2["id"])
+    
+    # Tweet 4: Repo link
+    tweet4_text = """Code + agent transcripts:
 github.com/blackgirlbytes/genuary2026"""
     
-    print("Creating tweet 3 (repo link)...")
-    create_tweet(client, tweet3_text, reply_to=tweet2["id"])
+    print("Creating tweet 4 (repo link)...")
+    create_tweet(client, tweet4_text, reply_to=tweet3["id"])
     
     # Mark as posted
     mark_as_posted(repo_root, day)

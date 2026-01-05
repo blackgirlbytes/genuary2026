@@ -380,46 +380,45 @@ This is my Genuary day {day} submission: "{prompt_title}\""""
     # Small delay between posts
     time.sleep(2)
     
-    # Post 2: Both outputs (reply with carousel)
+    # Post 2: Recipes output (reply with image)
     post2_text = f"""I built this with goose recipes + a shell script.
-genuary2026.vercel.app/genuary/days/day{day:02d}/
-
-Built this one with Agent Skills.
-genuary2026.vercel.app/genuary-skills/days/day{day:02d}/"""
+genuary2026.vercel.app/genuary/days/day{day:02d}/"""
     
-    print("Creating post 2 carousel items...")
-    item2a_id = create_media_container(access_token, user_id, genuary_url, is_carousel_item=True)
-    item2b_id = create_media_container(access_token, user_id, skills_url, is_carousel_item=True)
-    
-    if not wait_for_container(access_token, item2a_id, max_wait=120):
-        print("Failed to process post 2 first item")
+    print("Creating post 2 (recipes)...")
+    container2_id = create_media_container(access_token, user_id, genuary_url, text=post2_text, reply_to_id=post1_id)
+    if not wait_for_container(access_token, container2_id, max_wait=120):
+        print("Failed to process post 2")
         sys.exit(1)
-    if not wait_for_container(access_token, item2b_id, max_wait=120):
-        print("Failed to process post 2 second item")
-        sys.exit(1)
-    
-    carousel2_id = create_carousel_container(access_token, user_id, [item2a_id, item2b_id], text=post2_text, reply_to_id=post1_id)
-    if not wait_for_container(access_token, carousel2_id, max_wait=120):
-        print("Failed to process post 2 carousel")
-        sys.exit(1)
-    
-    time.sleep(5)
-    post2_id = publish_container(access_token, user_id, carousel2_id)
+    post2_id = publish_container(access_token, user_id, container2_id)
     print(f"Published post 2: {post2_id}")
     
     time.sleep(2)
     
-    # Post 3: Repo link (text only reply)
-    post3_text = """Code + agent transcripts:
-github.com/blackgirlbytes/genuary2026"""
+    # Post 3: Skills output (reply with image)
+    post3_text = f"""Built this one with Agent Skills.
+genuary2026.vercel.app/genuary-skills/days/day{day:02d}/"""
     
-    print("Creating post 3 (repo link)...")
-    container3_id = create_media_container(access_token, user_id, text=post3_text, media_type="TEXT", reply_to_id=post2_id)
-    if not wait_for_container(access_token, container3_id):
+    print("Creating post 3 (skills)...")
+    container3_id = create_media_container(access_token, user_id, skills_url, text=post3_text, reply_to_id=post2_id)
+    if not wait_for_container(access_token, container3_id, max_wait=120):
         print("Failed to process post 3")
         sys.exit(1)
     post3_id = publish_container(access_token, user_id, container3_id)
     print(f"Published post 3: {post3_id}")
+    
+    time.sleep(2)
+    
+    # Post 4: Repo link (text only reply)
+    post4_text = """Code + agent transcripts:
+github.com/blackgirlbytes/genuary2026"""
+    
+    print("Creating post 4 (repo link)...")
+    container4_id = create_media_container(access_token, user_id, text=post4_text, media_type="TEXT", reply_to_id=post3_id)
+    if not wait_for_container(access_token, container4_id):
+        print("Failed to process post 4")
+        sys.exit(1)
+    post4_id = publish_container(access_token, user_id, container4_id)
+    print(f"Published post 4: {post4_id}")
     
     # Mark as posted
     mark_as_posted(repo_root, day)

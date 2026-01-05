@@ -343,32 +343,40 @@ This is my Genuary day {day} submission: "{prompt_title}"
     root_ref = {"uri": post1_uri, "cid": post1_cid}
     reply_to = {"root": root_ref, "parent": root_ref}
     
-    # Post 2: Both outputs
+    # Post 2: Recipes output
     post2_text = f"""I built this with goose recipes + a shell script.
-genuary2026.vercel.app/genuary/days/day{day:02d}/
-
-Built this one with Agent Skills.
-genuary2026.vercel.app/genuary-skills/days/day{day:02d}/"""
-    print("Creating post 2 (both outputs)...")
+genuary2026.vercel.app/genuary/days/day{day:02d}/"""
+    print("Creating post 2 (recipes)...")
     post2 = create_post(
         session, 
         post2_text, 
         reply_to=reply_to,
-        images=[
-            {"blob": genuary_blob, "alt": f"Genuary day {day} created with goose recipes"},
-            {"blob": skills_blob, "alt": f"Genuary day {day} created with Agent Skills"},
-        ]
+        images=[{"blob": genuary_blob, "alt": f"Genuary day {day} created with goose recipes"}]
     )
     
     # Update reply reference
     reply_to = {"root": root_ref, "parent": {"uri": post2["uri"], "cid": post2["cid"]}}
     
-    # Post 3: Repo link
-    post3_text = """Code + agent transcripts:
+    # Post 3: Skills output
+    post3_text = f"""Built this one with Agent Skills.
+genuary2026.vercel.app/genuary-skills/days/day{day:02d}/"""
+    print("Creating post 3 (skills)...")
+    post3 = create_post(
+        session,
+        post3_text,
+        reply_to=reply_to,
+        images=[{"blob": skills_blob, "alt": f"Genuary day {day} created with Agent Skills"}]
+    )
+    
+    # Update reply reference
+    reply_to = {"root": root_ref, "parent": {"uri": post3["uri"], "cid": post3["cid"]}}
+    
+    # Post 4: Repo link
+    post4_text = """Code + agent transcripts:
 github.com/blackgirlbytes/genuary2026"""
     
-    print("Creating post 3 (repo link)...")
-    create_post(session, post3_text, reply_to=reply_to)
+    print("Creating post 4 (repo link)...")
+    create_post(session, post4_text, reply_to=reply_to)
     
     # Mark as posted
     mark_as_posted(repo_root, day)
