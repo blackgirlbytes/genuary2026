@@ -156,11 +156,13 @@ instructions: |
   Edit `/Users/rizel/Documents/agent-experiments/genuary2026/genuary/days/dayXX/index.html`
   
   Replace the placeholders (the harness.sh should do this, but verify):
-  - The day number placeholder → the day number
-  - The padded day placeholder → zero-padded day (01, 02, etc.)
-  - The title placeholder → prompt title
-  - The description placeholder → prompt description
-  - The credit placeholder → prompt credit
+  {% raw %}
+  - `{{DAY}}` → the day number
+  - `{{DAY_PADDED}}` → zero-padded day (01, 02, etc.)
+  - `{{TITLE}}` → prompt title
+  - `{{DESCRIPTION}}` → prompt description
+  - `{{CREDIT}}` → prompt credit
+  {% endraw %}
   
   ### STEP 7: Verify with Chrome DevTools
   
