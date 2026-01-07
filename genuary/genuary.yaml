@@ -143,8 +143,29 @@ instructions: |
   
   ### STEP 7: Verify with Chrome DevTools
   
-  This is CRITICAL - you must visually verify your art:
+  This is CRITICAL - you must visually verify your art.
   
+  **FIRST: Launch Chrome with remote debugging (if not already running):**
+  ```bash
+  # Kill any zombie processes from previous sessions
+  pkill -f "chrome-devtools-mcp" 2>/dev/null || true
+  
+  # Check if Chrome is already listening on port 9222
+  if ! lsof -i :9222 > /dev/null 2>&1; then
+    # Launch Chrome with remote debugging enabled
+    /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome \
+      --remote-debugging-port=9222 \
+      --user-data-dir=/tmp/genuary-chrome \
+      --no-first-run \
+      --no-default-browser-check \
+      &
+    sleep 3  # Give Chrome time to start
+  fi
+  ```
+  
+  This ensures Chrome is running and accepting DevTools connections on port 9222.
+  
+  Then:
   1. Navigate Chrome to: `file:///Users/rizel/Documents/agent-experiments/genuary2026/genuary/days/dayXX/index.html`
   2. Take a screenshot
   3. **Ask yourself HONESTLY:**
@@ -246,6 +267,27 @@ instructions: |
   
   **IMPORTANT:** You MUST complete this step. The transcript captures the creative process for documentation.
 
+  ## CRITICAL: Avoid Screenshot Loops
+  
+  When verifying with Chrome DevTools:
+  1. Take ONE screenshot
+  2. Evaluate it
+  3. If changes needed, make them, then take ONE more screenshot
+  4. **Maximum 3 screenshot iterations** - if still not right after 3, ask the user
+  
+  Do NOT:
+  - Take multiple screenshots in a row without making changes
+  - Reload and screenshot repeatedly
+  - Try to click elements if screenshot shows the art is working
+  
+  ## Rate Limit Handling
+  
+  If you encounter a rate limit error:
+  1. Tell the user: "Hit rate limit, pausing for 60 seconds..."
+  2. Run: `sleep 60`
+  3. Continue with the workflow
+  4. **Never just stop** - always complete the workflow or explicitly tell the user why you can't
+
 extensions:
   - type: builtin
     name: developer
@@ -256,8 +298,8 @@ extensions:
     args:
       - -y
       - chrome-devtools-mcp@latest
-      - --userDataDir
-      - /tmp/genuary-harness-chrome-profile
+      - --browserUrl
+      - http://127.0.0.1:9222
     timeout: 300
 
 parameters:

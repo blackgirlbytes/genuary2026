@@ -23,12 +23,30 @@ instructions: |
   3. Pitch something WILD and WHIMSICAL
   4. Wait for approval (MANDATORY!)
   5. Code extraordinary p5.js art
-  6. Verify with Chrome DevTools
-  7. Save GIF/video + PNG to output folder
-  8. Ask user if they're happy with the result
-  9. Push to GitHub (ONLY after user confirms!)
-  10. Export transcript and generate summary (see below)
-  11. Push transcript and summary to GitHub
+  6. **BEFORE using Chrome DevTools**, launch Chrome with remote debugging:
+     ```bash
+     # Kill any zombie processes from previous sessions
+     pkill -f "chrome-devtools-mcp" 2>/dev/null || true
+     
+     # Check if Chrome is already listening on port 9223 (skills uses 9223, main uses 9222)
+     if ! lsof -i :9223 > /dev/null 2>&1; then
+       # Launch Chrome with remote debugging enabled
+       /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome \
+         --remote-debugging-port=9223 \
+         --user-data-dir=/tmp/genuary-skills-chrome \
+         --no-first-run \
+         --no-default-browser-check \
+         &
+       sleep 3  # Give Chrome time to start
+     fi
+     ```
+     This ensures Chrome is running on port 9223 for this session.
+  7. Verify with Chrome DevTools
+  8. Save GIF/video + PNG to output folder
+  9. Ask user if they're happy with the result
+  10. Push to GitHub (ONLY after user confirms!)
+  11. Export transcript and generate summary (see below)
+  12. Push transcript and summary to GitHub
   
   ## STEP 10 & 11: Export Transcript & Generate Summary
   
@@ -72,6 +90,27 @@ instructions: |
   
   **IMPORTANT:** You MUST complete this step. The transcript captures the creative process for documentation.
   
+  ## CRITICAL: Avoid Screenshot Loops
+  
+  When verifying with Chrome DevTools:
+  1. Take ONE screenshot
+  2. Evaluate it
+  3. If changes needed, make them, then take ONE more screenshot
+  4. **Maximum 3 screenshot iterations** - if still not right after 3, ask the user
+  
+  Do NOT:
+  - Take multiple screenshots in a row without making changes
+  - Reload and screenshot repeatedly
+  - Try to click elements if screenshot shows the art is working
+  
+  ## Rate Limit Handling
+  
+  If you encounter a rate limit error:
+  1. Tell the user: "Hit rate limit, pausing for 60 seconds..."
+  2. Run: `sleep 60`
+  3. Continue with the workflow
+  4. **Never just stop** - always complete the workflow or explicitly tell the user why you can't
+  
   ## Remember
   
   - **BASIC IS A BUG** - if it's boring, it's wrong
@@ -93,8 +132,8 @@ extensions:
     args:
       - -y
       - chrome-devtools-mcp@latest
-      - --userDataDir
-      - /tmp/genuary-skills-chrome-profile
+      - --browserUrl
+      - http://127.0.0.1:9223
     timeout: 300
 
 parameters:

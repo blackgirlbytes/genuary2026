@@ -18,3 +18,60 @@ This version has NO shell script harness. Goose learns the workflow from the ski
 ## Requirements
 - Chrome DevTools extension must be enabled
 - Skills extension must be enabled in Goose config
+
+## Troubleshooting
+
+### Chrome DevTools Setup (IMPORTANT!)
+
+This recipe uses Chrome on **port 9223**. Before using Chrome DevTools, run:
+```bash
+# Kill any zombie processes from previous sessions
+pkill -f "chrome-devtools-mcp" 2>/dev/null || true
+
+# Check if Chrome is already listening on port 9223
+if ! lsof -i :9223 > /dev/null 2>&1; then
+  # Launch Chrome with remote debugging enabled
+  /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome \
+    --remote-debugging-port=9223 \
+    --user-data-dir=/tmp/genuary-skills-chrome \
+    --no-first-run \
+    --no-default-browser-check \
+    &
+  sleep 3
+fi
+```
+
+### Chrome DevTools Errors
+
+If you get any of these errors:
+- `Protocol error (Target.setAutoAttach): Target closed`
+- `Protocol error (Runtime.callFunctionOn): Target closed`
+- `Protocol error (DOM.resolveNode): No node with given id found`
+
+**Fix:** Make sure Chrome is running with remote debugging on port 9223 (see above).
+
+**Why this happens:** The MCP server connects to Chrome via `--browserUrl http://127.0.0.1:9223`. If Chrome isn't running with that debugging port, connections fail.
+
+### Rate Limiting
+
+If you hit a rate limit from the LLM provider:
+1. Tell the user: "Hit rate limit, waiting 30-60 seconds..."
+2. Wait: `sleep 30`
+3. Retry the operation
+4. **Don't just stop** — the user will think you failed
+
+### Page Shows Blank in Chrome
+
+1. Check if index.html has content: `cat days/dayXX/index.html | head -20`
+2. Check for JavaScript errors: use `chromedevtools__list_console_messages`
+3. Verify p5.js is loading (check network tab or script tags)
+
+### Parallel Sessions
+
+**This recipe uses port 9223.** The main genuary recipe uses port 9222.
+
+Both can run simultaneously because they connect to different Chrome instances:
+- genuary: `--remote-debugging-port=9222` → `/tmp/genuary-chrome`
+- genuary-skills (this one): `--remote-debugging-port=9223` → `/tmp/genuary-skills-chrome`
+
+Make sure both Chrome instances are running before starting parallel sessions.
