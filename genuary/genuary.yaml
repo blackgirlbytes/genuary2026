@@ -300,8 +300,8 @@ extensions:
     args:
       - -y
       - chrome-devtools-mcp@latest
-      - --browserUrl
-      - http://127.0.0.1:9222
+      - --userDataDir
+      - /tmp/genuary-chrome
     timeout: 300
 
 parameters:
