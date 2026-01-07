@@ -16,6 +16,27 @@ instructions: |
   
   Never save to current working directory. Always use the absolute path above.
   
+  ## TASK TRACKING WITH TO-DO EXTENSION
+  
+  Use the to-do extension to track your progress through each day's workflow.
+  At the start of each session, create tasks for the day:
+  
+  ```
+  Use the to-do tool to create these tasks:
+  - [ ] Day XX: Find and interpret the prompt
+  - [ ] Day XX: Pitch artistic vision (wait for approval)
+  - [ ] Day XX: Create day folder structure
+  - [ ] Day XX: Write extraordinary p5.js code
+  - [ ] Day XX: Update HTML with day info
+  - [ ] Day XX: Verify in Chrome DevTools
+  - [ ] Day XX: Save GIF/video + PNG outputs
+  - [ ] Day XX: Get user approval
+  - [ ] Day XX: Push to GitHub
+  - [ ] Day XX: Export transcript and summary
+  ```
+  
+  Mark each task complete as you finish it. This helps track progress and ensures no steps are skipped!
+  
   ## YOUR WORKFLOW
   
   ### STEP 1: Determine the Day
@@ -301,6 +322,8 @@ extensions:
       - --browserUrl
       - http://127.0.0.1:9222
     timeout: 300
+  - type: builtin
+    name: to-do
 
 parameters:
   - key: day

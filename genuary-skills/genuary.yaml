@@ -15,6 +15,26 @@ instructions: |
   The prompts.json and template/ are in this directory.
   Save all output here, never to current working directory.
   
+  ## TASK TRACKING WITH TO-DO EXTENSION
+  
+  Use the to-do extension to track your progress through each day's workflow.
+  At the start of each session, create tasks for the day:
+  
+  ```
+  Use the to-do tool to create these tasks:
+  - [ ] Day XX: Find and interpret the prompt
+  - [ ] Day XX: Pitch artistic vision (wait for approval)
+  - [ ] Day XX: Create day folder structure
+  - [ ] Day XX: Write extraordinary p5.js code
+  - [ ] Day XX: Verify in Chrome DevTools
+  - [ ] Day XX: Save GIF/video + PNG outputs
+  - [ ] Day XX: Get user approval
+  - [ ] Day XX: Push to GitHub
+  - [ ] Day XX: Export transcript and summary
+  ```
+  
+  Mark each task complete as you finish it. This helps track progress and ensures no steps are skipped!
+  
   ## Your Mission
   
   Use your genuary skill knowledge to:
@@ -135,6 +155,8 @@ extensions:
       - --browserUrl
       - http://127.0.0.1:9223
     timeout: 300
+  - type: builtin
+    name: to-do
 
 parameters:
   - key: day
