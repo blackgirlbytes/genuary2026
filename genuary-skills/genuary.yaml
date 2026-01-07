@@ -155,8 +155,6 @@ extensions:
       - --browserUrl
       - http://127.0.0.1:9223
     timeout: 300
-  - type: builtin
-    name: to-do
 
 parameters:
   - key: day
