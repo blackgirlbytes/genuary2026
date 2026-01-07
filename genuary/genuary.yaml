@@ -309,7 +309,7 @@ parameters:
     description: "The day number (1-31) to work on. If not provided, will use today's date or ask."
 
 activities:
-  - message: "🎨 Let's create some EXTRAORDINARY generative art! Which day are we making magic for?"
+  - "🎨 Let's create some EXTRAORDINARY generative art! Which day are we making magic for?"
   - Find the day's prompt
   - Interpret it artistically
   - Pitch a wild, whimsical idea

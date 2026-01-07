@@ -143,7 +143,7 @@ parameters:
     description: "The day number (1-31) to work on"
 
 activities:
-  - message: "🎨 Genuary time! Let's create something EXTRAORDINARY."
+  - "🎨 Genuary time! Let's create something EXTRAORDINARY."
   - Find the day's prompt
   - Interpret it artistically
   - Pitch a wild, whimsical idea
